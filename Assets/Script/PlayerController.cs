@@ -4,67 +4,77 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameObject Player;
+
+    public int HP = 5;
+
     public float WalkSpeed = 300.5f;
     public float RollSpeed = 300.5f;
     public float RollTabInterval = 0.1f;
-    public float RollTime = 1f;
+
     public Vector3 MoveDirection;
     public Rigidbody rb;
-
-    public float xRaw;
-    public float zRaw;
+    
+    //public float xRaw;
+    //public float zRaw;
 
     public bool IsWalkingLeft = false;
     public bool IsWalkingDown = false;
     public bool ToRoll = false;
     public bool OnRoll = false;
+    public bool OnRollRegen = false;
+
+    public float RollTime = 1f;
+    public float MaxRollRegenTime = 5f;
+    public float RollRegenTimeCount;
+    public int RollCount = 3;
+    public int MaxRollCount = 3;
 
 
     // Start is called before the first frame update
     void Start()
     {
         //AttackHitBox.SetActive(false);
+        RollCount = MaxRollCount;
+        RollRegenTimeCount = 1;
     }
 
     // Update is called once per frame
+
     void Update()
     {
         //=========
         // Walking & Rolling
         //=========
-        Vector3 Direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        xRaw = Input.GetAxisRaw("Horizontal");
-        zRaw = Input.GetAxisRaw("Vertical");
-        GetComponent<Rigidbody>().AddForce(Direction * WalkSpeed * Time.deltaTime, ForceMode.VelocityChange);
 
+        if (GetComponent<PlayerAttack>().IsAttacking == false) // Moving Condition
+        {
+            Vector3 Direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            //xRaw = Input.GetAxisRaw("Horizontal");
+            //zRaw = Input.GetAxisRaw("Vertical");
+            GetComponent<Rigidbody>().AddForce(Direction * WalkSpeed * Time.deltaTime, ForceMode.VelocityChange);
 
-        if (Direction.x < 0)
-        {
-            //PlayerSprite.flipX = true;
-            IsWalkingLeft = true;
-        }
-        else if (Direction.x > 0)
-        {
-            //PlayerSprite.flipX = false;
-            IsWalkingLeft = false;
-        }
-        if (Direction.z < 0)
-        {
-            IsWalkingDown = true;
-        }
-        else if (Direction.z > 0)
-        {
-            IsWalkingDown = false;
-        }
-
-        if (OnRoll)
-        {
-            Direction = new Vector3(xRaw, 0, zRaw);
-
-            GetComponent<Rigidbody>().AddForce(Direction * RollSpeed, ForceMode.Impulse);
-
+            if (Direction.x < 0)
+            {
+                //PlayerSprite.flipX = true;
+                IsWalkingLeft = true;
+            }
+            else if (Direction.x > 0)
+            {
+                //PlayerSprite.flipX = false;
+                IsWalkingLeft = false;
+            }
+            if (Direction.z < 0)
+            {
+                IsWalkingDown = true;
+            }
+            else if (Direction.z > 0)
+            {
+                IsWalkingDown = false;
+            }
         }
 
+               
         //=========
         // Turninng
         //=========
@@ -81,38 +91,75 @@ public class PlayerController : MonoBehaviour
         // Rolling
         //=========
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) && OnRoll == false)
+        if (OnRoll)
         {
-            if (ToRoll == true)
-            {
-                OnRoll = true;
-                ToRoll = false;
-                StartCoroutine("RollDelay", RollTime);
+            gameObject.tag = "PlayerDodge";
+            gameObject.layer = 2;
 
-            }
-            else
+        }
+        
+        if (RollCount > 0)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) && OnRoll == false)
             {
-                ToRoll = true;
-                StartCoroutine("SetTabDelay", RollTabInterval);
+                if (ToRoll == true)
+                {
+                    Vector3 RollDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+                    RollCount--;
+                    RollRegenTimeCount = 0;
+                    OnRoll = true;
+                    ToRoll = false;
+                    GetComponent<Rigidbody>().AddForce(RollDirection * RollSpeed, ForceMode.Impulse);
+                    StartCoroutine("RollDelay", RollTime);
+                }
+                else
+                {
+                    ToRoll = true;
+                    StartCoroutine("SetTabDelay", RollTabInterval);
+                }
             }
         }
 
-        
 
 
+        //Regen
+
+        if (RollCount < MaxRollCount)
+        {
+            OnRollRegen = true;
+        }
+
+        if (OnRollRegen)
+        {
+            if (RollRegenTimeCount < 1)
+            {
+                RollRegenTimeCount += Time.deltaTime / MaxRollRegenTime;
+            }
+            else
+            {
+                RollCount++;
+                RollRegenTimeCount = 0;
+                OnRollRegen = false;
+            }
+        }
 
     }
 
-    //private void Roll(float x, float z)
-    //{
-    //    rb.velocity = Vector3.zero;
-    //    Vector3 dir = new Vector3(x, 0, z);
+    public void ReceiveDamage(int Damage)//, float Timer)
+    {
+        HP -= Damage;
+        //   StunTimerMax = Timer;
+        // Stun();
+        if (HP <= 0)
+        {
+            //if (IsBoss)
+            //{
+            //    GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().IsWon = true;
+            //}
+            Destroy(this.gameObject);
+        }
+    }
 
-    //    rb.velocity += dir.normalized * RollSpeed;
-    //    StartCoroutine("OnRollTime", RollTime);
-
-    //}
-    
 
     IEnumerator SetTabDelay(float delay)
     {
@@ -129,6 +176,9 @@ public class PlayerController : MonoBehaviour
         //rb.velocity += dir.normalized * RollSpeed;
         yield return new WaitForSeconds(delay);
         OnRoll = false;
+        gameObject.tag = "Player";
+        gameObject.layer = 8;
+
     }
 
 

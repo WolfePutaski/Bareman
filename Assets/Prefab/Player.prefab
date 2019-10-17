@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 1276098908}
   m_Layer: 8
   m_Name: PlayerCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -135,14 +135,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7950226248485119461}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 12
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &7950226248485119455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,10 +155,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7af3df6e9703f3c4b8d2a34b5250c97f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  HP: 5
   WalkSpeed: 100
-  DashSpeed: 300.5
+  RollSpeed: 100
+  RollTabInterval: 0.2
+  MoveDirection: {x: 0, y: 0, z: 0}
+  rb: {fileID: 0}
   IsWalkingLeft: 0
   IsWalkingDown: 0
+  ToRoll: 0
+  OnRoll: 0
+  OnRollRegen: 0
+  RollTime: 0.5
+  MaxRollRegenTime: 2
+  RollRegenTimeCount: 1
+  RollCount: 3
+  MaxRollCount: 3
 --- !u!114 &1276098908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,15 +184,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dabf8c92cd112d47b0c127ad76c9935, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
   IsAttacking: 0
   CanAttack: 1
-  AttackRange: 10
-  AttackDelay: 0.13
+  AttackPushForce: 50
+  AttackFreeze: 0.2
   AttackDamage: 10
-  whatIsEnemies:
-    serializedVersion: 2
-    m_Bits: 0
+  ComboEndCooldownTime: 0.5
+  ComboCountInterval: 0.3
+  ComboIntervalCounting: 0
+  AttackFreezeTimer: 0
+  PunchFreeze: 0.2
+  PunchDamage: 10
+  PunchPushForce: 5
+  KickFreeze: 0.3
+  KickDamage: 25
+  KickhPushForce: 50
+  ComboCount: 0
+  MaximumComboCount: 4
   AttackHitBox: {fileID: 8962649056881218459}
+  PlayerTransform: {fileID: 0}
 --- !u!1 &8962649056881218459
 GameObject:
   m_ObjectHideFlags: 0
@@ -192,9 +216,9 @@ GameObject:
   - component: {fileID: 5703248905781033245}
   - component: {fileID: 2901882622598415622}
   - component: {fileID: 3213290428652248128}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: AttackHitBox
-  m_TagString: Untagged
+  m_TagString: PlayerAttack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -207,8 +231,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8962649056881218459}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.755, y: 0.32700002, z: 0}
-  m_LocalScale: {x: 0.45608538, y: 0.4828961, z: 0.61532426}
+  m_LocalPosition: {x: 0.755, y: 0, z: 0}
+  m_LocalScale: {x: 0.83805686, y: 0.6700184, z: 0.69223976}
   m_Children: []
   m_Father: {fileID: 7950226248485119454}
   m_RootOrder: 0
