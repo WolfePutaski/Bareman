@@ -60,8 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\DebugController.cs" />
-    <Compile Include="Assets\EnemyAttackMelee.cs" />
+    <Compile Include="Assets\Scenes\DebugController.cs" />
+    <Compile Include="Assets\Scenes\EnemyAttackMelee.cs" />
     <Compile Include="Assets\Script\CameraController.cs" />
     <Compile Include="Assets\Script\EnemyController.cs" />
     <Compile Include="Assets\Script\PlayerAttack.cs" />
