@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     public Vector3 MoveDirection;
     public Rigidbody rb;
+    public Vector3 Velocity;
     
     //public float xRaw;
     //public float zRaw;
@@ -100,7 +101,7 @@ public class PlayerController : MonoBehaviour
         
         if (RollCount > 0)
         {
-            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) && OnRoll == false)
+            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) && OnRoll == false && GetComponent<Rigidbody>().velocity.magnitude > 0 )
             {
                 if (ToRoll == true)
                 {
@@ -118,9 +119,23 @@ public class PlayerController : MonoBehaviour
                     StartCoroutine("SetTabDelay", RollTabInterval);
                 }
             }
+
+            if (Input.GetKeyDown(KeyCode.LeftShift) && OnRoll == false)
+            {
+                if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+                {
+                    Vector3 RollDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+                    RollCount--;
+                    RollRegenTimeCount = 0;
+                    OnRoll = true;
+                    ToRoll = false;
+                    GetComponent<Rigidbody>().AddForce(RollDirection * RollSpeed, ForceMode.Impulse);
+                    StartCoroutine("RollDelay", RollTime);
+                }
+            }
         }
 
-
+        Velocity = GetComponent<Rigidbody>().velocity;
 
         //Regen
 
