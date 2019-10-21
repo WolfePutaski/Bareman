@@ -123,6 +123,11 @@ public class EnemyController : MonoBehaviour
         
     }
 
+    public void ReceiveForce(float Force)
+    {
+        GetComponent<Rigidbody>().AddForce(Vector3.left * transform.localScale.x * Force, ForceMode.Impulse);
+    }
+
 
 }
 

@@ -11,9 +11,10 @@ public class PlayerAttack : MonoBehaviour
 
     //public float AttackRange = 10f;
     //TImer : Combo Counting; Attack Freezing;
-    public float AttackPushForce = 50f;
+    public float AttackDash = 50f;
     public float AttackFreeze = 1f;
     public float AttackDamage = 1f;
+    public float AttackPushForce = 10f;
     public float ComboEndCooldownTime = 3f;
     public float ComboCountInterval = 0.5f;
     public float ComboIntervalCounting;
@@ -21,11 +22,15 @@ public class PlayerAttack : MonoBehaviour
 
     public float PunchFreeze = 0.4f;
     public float PunchDamage = 10f;
-    public float PunchPushForce = 30f;
+    public float PunchDash = 30f;
+    public float PunchPushForce = 0.4f;
+
 
     public float KickFreeze = 0.8f;
     public float KickDamage = 20f;
-    public float KickhPushForce = 50f;
+    public float KickhDash = 50f;
+    public float KickPushForce = 0.4f;
+
 
 
     public int ComboCount = 0;
@@ -113,20 +118,22 @@ public class PlayerAttack : MonoBehaviour
     //Punch & Kick
     //==========
 
-    private void DoPunch()
+    public void DoPunch()
     {
         AttackFreeze = PunchFreeze;
         AttackDamage = PunchDamage;
+        AttackDash = PunchDash;
         AttackPushForce = PunchPushForce;
         Debug.Log("Player Attack Punch");
         Attack();
     }
 
-    private void DoKick()
+    public void DoKick()
     {
         AttackFreeze = KickFreeze;
         AttackDamage = KickDamage;
-        AttackPushForce = KickhPushForce;
+        AttackDash = KickhDash;
+        AttackPushForce = KickPushForce;
         Debug.Log("Player Attack Kick");
         Attack();
         //StartCoroutine("SetAttackFreeze", AttackFreeze);
@@ -135,7 +142,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void Attack()
     {
-        GetComponent<Rigidbody>().AddForce(Vector3.right * transform.localScale.x * AttackPushForce, ForceMode.Impulse);
+        GetComponent<Rigidbody>().AddForce(Vector3.right * transform.localScale.x * AttackDash, ForceMode.Impulse);
         ComboCount++;
         ComboIntervalCounting = -99;
         IsAttacking = true;
@@ -168,6 +175,8 @@ public class PlayerAttack : MonoBehaviour
         {
             //Deal Damage to Enemy
             other.SendMessage("ReceiveDamage", AttackDamage);
+            other.SendMessage("ReceiveForce", AttackPushForce);
+
             Debug.Log("Hit Enemy");
         }
 

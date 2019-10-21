@@ -1,5 +1,84 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &643566089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 643566090}
+  - component: {fileID: 643566091}
+  m_Layer: 8
+  m_Name: New Sprite
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &643566090
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643566089}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.04, y: 0, z: 0}
+  m_LocalScale: {x: 0.60060805, y: 0.60060805, z: 0.60060805}
+  m_Children: []
+  m_Father: {fileID: 7950226248485119454}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &643566091
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643566089}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: 15bebe52fd5275b45b9c2328de556a49, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 2.39, y: 3.96}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &6518452114425363684
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,7 +104,7 @@ Transform:
   m_GameObject: {fileID: 6518452114425363684}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.48, y: 1.358, z: 1.72}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.7562077, y: 2.7562077, z: 2.7562077}
   m_Children:
   - {fileID: 7950226248485119454}
   m_Father: {fileID: 0}
@@ -65,6 +144,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8525039539884438459}
+  - {fileID: 643566090}
   m_Father: {fileID: 8068688508796798369}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -83,7 +163,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7950226248485119461}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -123,10 +203,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.30783606
+  m_Height: 2.2831888
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.02022767, z: 0}
 --- !u!54 &7950226248485119458
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -135,7 +215,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7950226248485119461}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 1.5
   m_Drag: 12
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -158,13 +238,13 @@ MonoBehaviour:
   Player: {fileID: 0}
   HP: 5
   WalkSpeed: 100
-  RollSpeed: 100
+  RollSpeed: 80
   RollTabInterval: 0.2
   MoveDirection: {x: 0, y: 0, z: 0}
   rb: {fileID: 0}
+  Velocity: {x: 0, y: 0, z: 0}
   IsWalkingLeft: 0
   IsWalkingDown: 0
-  ToRoll: 0
   OnRoll: 0
   OnRollRegen: 0
   RollTime: 0.5
@@ -187,19 +267,22 @@ MonoBehaviour:
   Player: {fileID: 0}
   IsAttacking: 0
   CanAttack: 1
-  AttackPushForce: 50
+  AttackDash: 50
   AttackFreeze: 0.2
   AttackDamage: 10
-  ComboEndCooldownTime: 0.5
+  AttackPushForce: 50
+  ComboEndCooldownTime: 0.25
   ComboCountInterval: 0.3
   ComboIntervalCounting: 0
   AttackFreezeTimer: 0
-  PunchFreeze: 0.2
+  PunchFreeze: 0.13
   PunchDamage: 10
-  PunchPushForce: 5
-  KickFreeze: 0.3
-  KickDamage: 25
-  KickhPushForce: 50
+  PunchDash: 30
+  PunchPushForce: 2
+  KickFreeze: 0.2
+  KickDamage: 20
+  KickhDash: 50
+  KickPushForce: 5
   ComboCount: 0
   MaximumComboCount: 4
   AttackHitBox: {fileID: 8962649056881218459}

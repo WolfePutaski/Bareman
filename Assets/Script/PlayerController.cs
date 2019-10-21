@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public float WalkSpeed = 300.5f;
     public float RollSpeed = 300.5f;
     public float RollTabInterval = 0.1f;
+    public float MaxInvincibleTime = 0.5f;
+    public float InvincibleTime = 1;
 
     public Vector3 MoveDirection;
     public Rigidbody rb;
@@ -21,9 +23,10 @@ public class PlayerController : MonoBehaviour
 
     public bool IsWalkingLeft = false;
     public bool IsWalkingDown = false;
-    public bool ToRoll = false;
+    //public bool ToRoll = false;
     public bool OnRoll = false;
     public bool OnRollRegen = false;
+    public bool IsInvincible = false;
 
     public float RollTime = 1f;
     public float MaxRollRegenTime = 5f;
@@ -54,6 +57,26 @@ public class PlayerController : MonoBehaviour
             //xRaw = Input.GetAxisRaw("Horizontal");
             //zRaw = Input.GetAxisRaw("Vertical");
             GetComponent<Rigidbody>().AddForce(Direction * WalkSpeed * Time.deltaTime, ForceMode.VelocityChange);
+            //ToRoll = true;
+            //StartCoroutine("SetTabDelay", RollTabInterval);
+
+
+            if (RollCount > 0)
+            {
+                if (Input.GetKeyDown(KeyCode.LeftShift) && OnRoll == false)
+                {
+                    if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+                    {
+                        Vector3 RollDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+                        RollCount--;
+                        RollRegenTimeCount = 0;
+                        OnRoll = true;
+                        //ToRoll = false;
+                        GetComponent<Rigidbody>().AddForce(RollDirection * RollSpeed, ForceMode.Impulse);
+                        StartCoroutine("RollDelay", RollTime);
+                    }
+                }
+            }
 
             if (Direction.x < 0)
             {
@@ -98,42 +121,26 @@ public class PlayerController : MonoBehaviour
             gameObject.layer = 2;
 
         }
-        
-        if (RollCount > 0)
-        {
-            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) && OnRoll == false && GetComponent<Rigidbody>().velocity.magnitude > 0 )
-            {
-                if (ToRoll == true)
-                {
-                    Vector3 RollDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-                    RollCount--;
-                    RollRegenTimeCount = 0;
-                    OnRoll = true;
-                    ToRoll = false;
-                    GetComponent<Rigidbody>().AddForce(RollDirection * RollSpeed, ForceMode.Impulse);
-                    StartCoroutine("RollDelay", RollTime);
-                }
-                else
-                {
-                    ToRoll = true;
-                    StartCoroutine("SetTabDelay", RollTabInterval);
-                }
-            }
 
-            if (Input.GetKeyDown(KeyCode.LeftShift) && OnRoll == false)
-            {
-                if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
-                {
-                    Vector3 RollDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-                    RollCount--;
-                    RollRegenTimeCount = 0;
-                    OnRoll = true;
-                    ToRoll = false;
-                    GetComponent<Rigidbody>().AddForce(RollDirection * RollSpeed, ForceMode.Impulse);
-                    StartCoroutine("RollDelay", RollTime);
-                }
-            }
-        }
+        //if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) 
+        //    && OnRoll == false && GetComponent<Rigidbody>().velocity.magnitude > 0 && GetComponent<PlayerAttack>().IsAttacking == false)
+        ////{
+        ////    if (ToRoll == true)
+        ////    {
+        ////        Vector3 RollDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        ////        RollCount--;
+        ////        RollRegenTimeCount = 0;
+        ////        OnRoll = true;
+        ////        ToRoll = false;
+        ////        GetComponent<Rigidbody>().AddForce(RollDirection * RollSpeed, ForceMode.Impulse);
+        ////        StartCoroutine("RollDelay", RollTime);
+        ////    }
+        ////    else
+        //{
+        //    ToRoll = true;
+        //    StartCoroutine("SetTabDelay", RollTabInterval);
+        //}
+        ////}
 
         Velocity = GetComponent<Rigidbody>().velocity;
 
@@ -158,11 +165,32 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if(InvincibleTime < 1)
+        {
+            IsInvincible = true;
+            InvincibleTime += Time.deltaTime / MaxInvincibleTime;
+        }
+        else
+        {
+            IsInvincible = false;
+        }
+
+        if (IsInvincible || OnRoll)
+        {
+            gameObject.tag = "PlayerDodge";
+            gameObject.layer = 2;
+        }
+        else
+        {
+            gameObject.tag = gameObject.tag = "Player";
+            gameObject.layer = 8;
+        }
     }
 
     public void ReceiveDamage(int Damage)//, float Timer)
     {
         HP -= Damage;
+        InvincibleTime = 0;
         //   StunTimerMax = Timer;
         // Stun();
         if (HP <= 0)
@@ -175,13 +203,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-    IEnumerator SetTabDelay(float delay)
+    public void ReceiveForce(float Force)
     {
-        yield return new WaitForSeconds(delay);
-        ToRoll = false;
-
+        GetComponent<Rigidbody>().AddForce(Vector3.left * Force, ForceMode.Impulse);
     }
+
+
+    //IEnumerator SetTabDelay(float delay)
+    //{
+    //    yield return new WaitForSeconds(delay);
+    //    ToRoll = false;
+
+    //}
 
     IEnumerator RollDelay(float delay)
     {
