@@ -11,6 +11,7 @@ public class PlayerAttack : MonoBehaviour
 
     //public float AttackRange = 10f;
     //TImer : Combo Counting; Attack Freezing;
+
     public float AttackDash = 50f;
     public float AttackFreeze = 1f;
     public float AttackDamage = 1f;
@@ -25,11 +26,21 @@ public class PlayerAttack : MonoBehaviour
     public float PunchDash = 30f;
     public float PunchPushForce = 0.4f;
 
+    //S0=front; S1 = foward; S2 = Up; S3 = down
 
-    public float KickFreeze = 0.8f;
-    public float KickDamage = 20f;
-    public float KickhDash = 50f;
-    public float KickPushForce = 0.4f;
+    //Special
+
+
+    //Front Special
+
+    public float S1Freeze = 0.8f;
+    public float S1Damage = 20f;
+    public float S1Dash = 50f;
+    public float S1PushForce = 0.4f;
+
+    //Up Special
+
+    //Down Special
 
 
 
@@ -59,7 +70,21 @@ public class PlayerAttack : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.X))
             {
-                DoKick();
+                if (Input.GetKey(KeyCode.UpArrow))
+                {
+
+                }
+                else if (Input.GetAxis("Horizontal") != 0)
+                {
+                    DoPush();
+                }
+                else if (Input.GetKey(KeyCode.DownArrow))
+                {
+
+                }
+                else
+                {
+                }
             }
         }
 
@@ -128,12 +153,11 @@ public class PlayerAttack : MonoBehaviour
         Attack();
     }
 
-    public void DoKick()
+    public void DoPush()
     {
-        AttackFreeze = KickFreeze;
-        AttackDamage = KickDamage;
-        AttackDash = KickhDash;
-        AttackPushForce = KickPushForce;
+        AttackFreeze = S1Freeze;
+        AttackDash = S1Dash;
+        AttackPushForce = S1PushForce;
         Debug.Log("Player Attack Kick");
         Attack();
         //StartCoroutine("SetAttackFreeze", AttackFreeze);
@@ -171,7 +195,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (AttackHitBox && other.tag == "Enemy")
+        if (other.tag == "Enemy")
         {
             //Deal Damage to Enemy
             other.SendMessage("ReceiveDamage", AttackDamage);

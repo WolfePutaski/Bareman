@@ -7,7 +7,6 @@ public class EnemyAttackMelee : MonoBehaviour
     public LayerMask playerLayer;
     private Vector3 dir;
     public EnemyController Controller;
-    public PlayerController Player;
 
     public GameObject AttackHitbox;
 
@@ -32,6 +31,9 @@ public class EnemyAttackMelee : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Target = GameObject.Find("PlayerCollider");
+        //Player = GameObject.Find("PlayerCollider");
+
         AttackHitbox.SetActive(false);
         ChargeTimerCounting = 1f;
         AttackTimerCounting = 1f;  
@@ -46,32 +48,37 @@ public class EnemyAttackMelee : MonoBehaviour
         //===============
 
         dir = Vector3.Normalize(Controller.Direction);
-        Vector3 attackdir = new Vector3(Controller.transform.localScale.x, 0, 0);
+        Vector3 attackdir = new Vector3(transform.localScale.x, 0, 0);
 
         Debug.DrawRay(transform.position, attackdir * DetectRange, Color.cyan); //Debug Raycast
 
         if (OnChecking)
         {
-            if (Player.OnRoll == false)
-            {
+
                 if (Physics.Raycast(transform.position, attackdir , DetectRange, playerLayer))
                 {
                     ChargeTimerCounting = 0f;
                     OnCharging = true;
                 }
-            }
-           
+
         }
 
-        if (OnCharging || OnAttacking)
+        if (OnCharging || OnAttacking || Controller.OnStun)
         {
             OnChecking = false;
             Controller.OnFollow = false;
         }
-        else
+        else if (!Controller.OnStun)
         {
             OnChecking = true;
             Controller.OnFollow = true;
+        }
+
+
+        if (Controller.OnStun)
+        {
+            ChargeTimerCounting = -1;
+            OnCharging = false;
         }
 
         //===============
@@ -97,6 +104,17 @@ public class EnemyAttackMelee : MonoBehaviour
         //===============
         //Attacking
         //===============
+
+        if (transform.localScale.x < 0 && AttackPushForce > 0)
+        {
+            AttackPushForce = -AttackPushForce;
+
+        }
+        else if (transform.localScale.x > 0 && AttackPushForce < 0)
+        {
+            AttackPushForce = -AttackPushForce;
+        }
+
 
         if (OnAttacking == true)
         {

@@ -34,6 +34,9 @@ public class PlayerController : MonoBehaviour
     public int RollCount = 3;
     public int MaxRollCount = 3;
 
+    public SpriteRenderer PlayerSprite;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -179,11 +182,16 @@ public class PlayerController : MonoBehaviour
         {
             gameObject.tag = "PlayerDodge";
             gameObject.layer = 2;
+            PlayerSprite.color = Color.gray;
+
+
         }
         else
         {
             gameObject.tag = gameObject.tag = "Player";
             gameObject.layer = 8;
+            PlayerSprite.color = Color.white;
+
         }
     }
 
@@ -205,7 +213,7 @@ public class PlayerController : MonoBehaviour
 
     public void ReceiveForce(float Force)
     {
-        GetComponent<Rigidbody>().AddForce(Vector3.left * Force, ForceMode.Impulse);
+        GetComponent<Rigidbody>().AddForce(Vector3.right * Force, ForceMode.Impulse);
     }
 
 

@@ -7,14 +7,14 @@ public class EnemyController : MonoBehaviour
     //when stumble = No Follow, No Move, No Attack
     // Controller: Sense: Brain;
 
-    public GameObject Self;
-
+    public SpriteRenderer EnemySprite;
+    
     public float HP = 10f;
     public float WalkSpeed = 300.5f;
 
     public Vector3 Direction;
 
-    public float StunTimer; //For different stun type
+    public float StunType; //For different stun type
     public float StunTimerMax;
     public float StunTimeCounting;
 
@@ -23,9 +23,10 @@ public class EnemyController : MonoBehaviour
     public bool OnStun;
     public bool IsWalkingLeft = false;
 
-    //==============
-    //Attack
-    //==============
+
+    //=======
+    // Attack
+    //=======
     public GameObject Target;
 
 
@@ -33,6 +34,7 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         StunTimeCounting = 1f;
+        Target = GameObject.Find("Player");
     }
 
     // Update is called once per frame
@@ -65,18 +67,7 @@ public class EnemyController : MonoBehaviour
 
         }
 
-        //=========
-        // Follow Check
-        //=========
-
-        if (OnStun)
-        {
-            OnFollow = false;
-        }
-        else
-        {
-            OnFollow = true;
-        }
+        
 
         //=========
         // Stun
@@ -92,6 +83,22 @@ public class EnemyController : MonoBehaviour
             OnStun = false;
         }
 
+        //=========
+        // Follow Check
+        //=========
+
+        if (OnStun)
+        {
+            OnFollow = false;
+            EnemySprite.color = Color.red;
+            
+        }
+        else
+        {
+            OnFollow = true;
+            EnemySprite.color = Color.white;
+        }
+
     }
      
     //=========
@@ -100,9 +107,12 @@ public class EnemyController : MonoBehaviour
 
     public void ReceiveDamage(int Damage)//, float Timer)
     {
+        //Deactive when receiving damage.
+
+
         HP -= Damage;
-     //   StunTimerMax = Timer;
-        Stun();
+        StunTimeCounting = 0;
+
         if (HP <= 0)
         {
             //if (IsBoss)
@@ -111,6 +121,10 @@ public class EnemyController : MonoBehaviour
             //}
             Destroy(this.gameObject);
         }
+        //MeleeAttackController.ChargeTimerCounting = -1;
+        //RangedAttackController.ChargeTimerCounting = -1;
+        //MeleeAttackController.OnCharging = false;
+        //RangedAttackController.OnCharging = false;
     }
 
     //=========
@@ -120,7 +134,11 @@ public class EnemyController : MonoBehaviour
     public void Stun()
     {
         StunTimeCounting = 0;
-        
+    }
+
+    public void ReceiveBlow()
+    {
+
     }
 
     public void ReceiveForce(float Force)
