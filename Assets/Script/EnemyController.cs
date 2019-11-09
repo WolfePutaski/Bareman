@@ -23,6 +23,13 @@ public class EnemyController : MonoBehaviour
     public bool OnStun;
     public bool IsWalkingLeft = false;
 
+    public Rigidbody rb;
+
+    public bool IsGrounded;
+    public float groundCheckRange = 1f;
+    public LayerMask groundLayer;
+
+
 
     //=======
     // Attack
@@ -40,6 +47,21 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //=========
+        // Grounded
+        //=========
+
+        IsGrounded = Physics.Raycast(transform.position, -Vector3.up, groundCheckRange, groundLayer);
+
+        if (IsGrounded)
+        {
+            rb.drag = 12;
+        }
+        else if (!IsGrounded)
+        {
+            rb.drag = 0;
+        }
 
         //=========
         // Movement

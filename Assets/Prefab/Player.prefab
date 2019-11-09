@@ -201,7 +201,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5256630372203053641}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 287903bf5aa02254badb786febb100ce, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.30783606
@@ -244,8 +244,12 @@ MonoBehaviour:
   MaxInvincibleTime: 0.5
   InvincibleTime: 1
   MoveDirection: {x: 0, y: 0, z: 0}
-  rb: {fileID: 0}
+  rb: {fileID: 5256630372203053646}
   Velocity: {x: 0, y: 0, z: 0}
+  groundCheckRange: 1.2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2048
   IsWalkingLeft: 0
   IsWalkingDown: 0
   OnRoll: 0
@@ -256,6 +260,7 @@ MonoBehaviour:
   RollRegenTimeCount: 1
   RollCount: 3
   MaxRollCount: 3
+  IsGrounded: 0
   PlayerSprite: {fileID: 2785386070057708967}
 --- !u!114 &2785386071839465200
 MonoBehaviour:
@@ -284,6 +289,9 @@ MonoBehaviour:
   PunchDamage: 10
   PunchDash: 20
   PunchPushForce: 30
+  IsTired: 0
+  TiringTimeCount: 0
+  TiringTimeMax: 0
   S1Freeze: 0.8
   S1Damage: 20
   S1Dash: 50

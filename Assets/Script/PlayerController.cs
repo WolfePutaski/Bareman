@@ -17,7 +17,11 @@ public class PlayerController : MonoBehaviour
     public Vector3 MoveDirection;
     public Rigidbody rb;
     public Vector3 Velocity;
-    
+
+    public bool IsGrounded;
+    public float groundCheckRange = 1f;
+    public LayerMask groundLayer;
+
     //public float xRaw;
     //public float zRaw;
 
@@ -33,6 +37,9 @@ public class PlayerController : MonoBehaviour
     public float RollRegenTimeCount;
     public int RollCount = 3;
     public int MaxRollCount = 3;
+
+    public float JumpForce = 50f;
+
 
     public SpriteRenderer PlayerSprite;
 
@@ -51,10 +58,25 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         //=========
+        // Grounded
+        //=========
+
+        IsGrounded = Physics.Raycast(transform.position, -Vector3.up, groundCheckRange, groundLayer);
+
+        if (IsGrounded)
+        {
+            rb.drag = 12;
+        }
+        else if (!IsGrounded)
+        {
+            rb.drag = 0;
+        }
+
+        //=========
         // Walking & Rolling
         //=========
 
-        if (GetComponent<PlayerAttack>().IsAttacking == false) // Moving Condition
+        if (GetComponent<PlayerAttack>().IsAttacking == false && GetComponent<PlayerAttack>().IsTired == false && IsGrounded) // Moving Condition
         {
             Vector3 Direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             //xRaw = Input.GetAxisRaw("Horizontal");
@@ -99,6 +121,12 @@ public class PlayerController : MonoBehaviour
             {
                 IsWalkingDown = false;
             }
+
+            //if (Input.GetKeyDown(KeyCode.Space))
+            //{
+            //    GetComponent<Rigidbody>().AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+
+            //}
         }
 
                
@@ -236,6 +264,4 @@ public class PlayerController : MonoBehaviour
         gameObject.layer = 8;
 
     }
-
-
 }

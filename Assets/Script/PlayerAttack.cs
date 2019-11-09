@@ -16,36 +16,43 @@ public class PlayerAttack : MonoBehaviour
     public float AttackFreeze = 1f;
     public float AttackDamage = 1f;
     public float AttackPushForce = 10f;
-    public float ComboEndCooldownTime = 3f;
-    public float ComboCountInterval = 0.5f;
-    public float ComboIntervalCounting;
     public float AttackFreezeTimer;
 
+    [Header("Normal Attack")]
     public float PunchFreeze = 0.4f;
     public float PunchDamage = 10f;
     public float PunchDash = 30f;
     public float PunchPushForce = 0.4f;
 
     //S0=front; S1 = foward; S2 = Up; S3 = down
-
     //Special
+    [Header("Special Attack")]
 
 
     //Front Special
-
+    [Header("Special Attack Front")]
     public float S1Freeze = 0.8f;
     public float S1Damage = 20f;
     public float S1Dash = 50f;
     public float S1PushForce = 0.4f;
 
     //Up Special
+    [Header("Special Attack Up")]
 
     //Down Special
+    [Header("Special Attack Down")]
 
+    [Header("Tiring Setting")]
+    public bool IsTired = false;
+    public float TiringTimeCount;
+    public float TiringTimeMax;
 
-
+    [Header("Combo Counting")]
     public int ComboCount = 0;
     public int MaximumComboCount = 4;
+    public float ComboEndCooldownTime = 3f;
+    public float ComboCountInterval = 0.5f;
+    public float ComboIntervalCounting;
 
     public GameObject AttackHitBox;
     public GameObject PlayerTransform;
@@ -72,7 +79,7 @@ public class PlayerAttack : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.UpArrow))
                 {
-
+                    DoUpperCut();
                 }
                 else if (Input.GetAxis("Horizontal") != 0)
                 {
@@ -84,6 +91,7 @@ public class PlayerAttack : MonoBehaviour
                 }
                 else
                 {
+
                 }
             }
         }
@@ -132,11 +140,32 @@ public class PlayerAttack : MonoBehaviour
         }
         else
         {
+            if (IsAttacking)
+            {
+                TiringTimeCount = 0;
+            }
             IsAttacking = false;
-            CanAttack = true;
+            if (!IsTired)
+            {
+                CanAttack = true;
+            }
             ComboIntervalCounting = 0;
+
         }
 
+        if (IsTired)
+        {
+            if (TiringTimeCount < 1)
+            {
+                CanAttack = false;
+                TiringTimeCount += Time.deltaTime / TiringTimeMax;
+            }
+            else if (TiringTimeCount >= 1)
+            {
+                IsTired = false;
+                CanAttack = true;
+            }
+        }
     }
 
     //==========
@@ -159,8 +188,13 @@ public class PlayerAttack : MonoBehaviour
         AttackDash = S1Dash;
         AttackPushForce = S1PushForce;
         Debug.Log("Player Attack Kick");
-        Attack();
+        SpecialAttack();
         //StartCoroutine("SetAttackFreeze", AttackFreeze);
+
+    }
+
+    public void DoUpperCut()
+    {
 
     }
 
@@ -173,6 +207,14 @@ public class PlayerAttack : MonoBehaviour
         AttackFreezeTimer = 0;
     }
 
+    private void SpecialAttack()
+    {
+        GetComponent<Rigidbody>().AddForce(Vector3.right * transform.localScale.x * AttackDash, ForceMode.Impulse);
+        IsAttacking = true;
+        AttackFreezeTimer = 0;
+        TiringTimeCount = -99;
+        IsTired = true;
+    }
     //IEnumerator SetAttackFreeze(float delay)
     //{
     //    ComboIntervalCounting = -99;
@@ -185,7 +227,7 @@ public class PlayerAttack : MonoBehaviour
     //    {
     //        CanAttack = true;
     //    }
-        
+
     //    IsAttacking = false;
     //    AttackHitBox.SetActive(false);
     //    ComboIntervalCounting = 0;

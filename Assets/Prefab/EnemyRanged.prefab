@@ -214,6 +214,12 @@ MonoBehaviour:
   OnFollow: 0
   OnStun: 0
   IsWalkingLeft: 0
+  rb: {fileID: 8270223756191035620}
+  IsGrounded: 0
+  groundCheckRange: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2048
   Target: {fileID: 0}
 --- !u!114 &6769093275690586345
 MonoBehaviour:
