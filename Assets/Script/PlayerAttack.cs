@@ -16,6 +16,8 @@ public class PlayerAttack : MonoBehaviour
     public float AttackFreeze = 1f;
     public float AttackDamage = 1f;
     public float AttackPushForce = 10f;
+    public float AttackBlowType = 0;// 0= stagger, 1 = knock
+
     public float AttackFreezeTimer;
 
     [Header("Normal Attack")]
@@ -23,11 +25,16 @@ public class PlayerAttack : MonoBehaviour
     public float PunchDamage = 10f;
     public float PunchDash = 30f;
     public float PunchPushForce = 0.4f;
+    public int PunchBlowType = 0;// 0= stagger, 1 = knock
 
-    //S0=front; S1 = foward; S2 = Up; S3 = down
+
+    //S0=still; S1 = foward; S2 = Up; S3 = down
     //Special
     [Header("Special Attack")]
-
+    public float S0Freeze = 0.8f;
+    public float S0Damage = 20f;
+    public float S0Dash = 0;
+    public float S0PushForce = 0;
 
     //Front Special
     [Header("Special Attack Front")]
@@ -35,12 +42,13 @@ public class PlayerAttack : MonoBehaviour
     public float S1Damage = 20f;
     public float S1Dash = 50f;
     public float S1PushForce = 0.4f;
+    public int S1BlowType = 2;// 0= stagger, 1 = knock
 
-    //Up Special
-    [Header("Special Attack Up")]
+    ////Up Special
+    //[Header("Special Attack Up")]
 
-    //Down Special
-    [Header("Special Attack Down")]
+    ////Down Special
+    //[Header("Special Attack Down")]
 
     [Header("Tiring Setting")]
     public bool IsTired = false;
@@ -73,7 +81,14 @@ public class PlayerAttack : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                DoPunch();
+                if (ComboCount == 3)
+                {
+                    DoLastPunch();
+                }
+                else
+                {
+                    DoPunch();
+                }
             }
             if (Input.GetKeyDown(KeyCode.X))
             {
@@ -89,7 +104,7 @@ public class PlayerAttack : MonoBehaviour
                 {
 
                 }
-                else
+                else //No other key
                 {
 
                 }
@@ -178,7 +193,18 @@ public class PlayerAttack : MonoBehaviour
         AttackDamage = PunchDamage;
         AttackDash = PunchDash;
         AttackPushForce = PunchPushForce;
+        AttackBlowType = PunchBlowType;
         Debug.Log("Player Attack Punch");
+        Attack();
+    }
+    public void DoLastPunch()
+    {
+        AttackFreeze = PunchFreeze;
+        AttackDamage = PunchDamage;
+        AttackDash = PunchDash;
+        AttackPushForce = PunchPushForce * 2f;
+        AttackBlowType = 1;
+        Debug.Log("Player Attack Last Punch");
         Attack();
     }
 
@@ -187,6 +213,8 @@ public class PlayerAttack : MonoBehaviour
         AttackFreeze = S1Freeze;
         AttackDash = S1Dash;
         AttackPushForce = S1PushForce;
+        AttackBlowType = S1BlowType;
+
         Debug.Log("Player Attack Kick");
         SpecialAttack();
         //StartCoroutine("SetAttackFreeze", AttackFreeze);
@@ -200,7 +228,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void Attack()
     {
-        GetComponent<Rigidbody>().AddForce(Vector3.right * transform.localScale.x * AttackDash, ForceMode.Impulse);
+        GetComponent<Rigidbody>().AddForce(Vector3.right * transform.localScale.x * AttackDash, ForceMode.VelocityChange);
         ComboCount++;
         ComboIntervalCounting = -99;
         IsAttacking = true;
@@ -242,6 +270,7 @@ public class PlayerAttack : MonoBehaviour
             //Deal Damage to Enemy
             other.SendMessage("ReceiveDamage", AttackDamage);
             other.SendMessage("ReceiveForce", AttackPushForce);
+            other.SendMessage("ReceiveBlow", AttackBlowType);
 
             Debug.Log("Hit Enemy");
         }

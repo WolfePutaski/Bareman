@@ -8,16 +8,21 @@ public class PlayerController : MonoBehaviour
 
     public int HP = 5;
 
+    [Header("Movement")]
     public float WalkSpeed = 300.5f;
     public float RollSpeed = 300.5f;
-    public float RollTabInterval = 0.1f;
+    public Vector3 MoveDirection;
+    public Vector3 Velocity;
+    public Rigidbody rb;
+
+    [Header("Invincible")]
+
+    public bool IsInvincible = false;
     public float MaxInvincibleTime = 0.5f;
     public float InvincibleTime = 1;
 
-    public Vector3 MoveDirection;
-    public Rigidbody rb;
-    public Vector3 Velocity;
 
+    [Header("Grounded")]
     public bool IsGrounded;
     public float groundCheckRange = 1f;
     public LayerMask groundLayer;
@@ -28,21 +33,24 @@ public class PlayerController : MonoBehaviour
     public bool IsWalkingLeft = false;
     public bool IsWalkingDown = false;
     //public bool ToRoll = false;
+
+    [Header("Rolling")]
+
     public bool OnRoll = false;
     public bool OnRollRegen = false;
-    public bool IsInvincible = false;
-
+    public float RollTabInterval = 0.1f;
     public float RollTime = 1f;
     public float MaxRollRegenTime = 5f;
-    public float RollRegenTimeCount;
+    private float RollRegenTimeCount;
     public int RollCount = 3;
     public int MaxRollCount = 3;
 
-    public float JumpForce = 50f;
+    //public float JumpForce = 50f;
 
+    [Header("Animation")]
 
     public SpriteRenderer PlayerSprite;
-
+    public Animator Animator;
 
 
     // Start is called before the first frame update
@@ -76,7 +84,7 @@ public class PlayerController : MonoBehaviour
         // Walking & Rolling
         //=========
 
-        if (GetComponent<PlayerAttack>().IsAttacking == false && GetComponent<PlayerAttack>().IsTired == false && IsGrounded) // Moving Condition
+        if (GetComponent<PlayerAttack>().IsAttacking == false && GetComponent<PlayerAttack>().IsTired == false && IsGrounded && !IsInvincible) // Moving Condition
         {
             Vector3 Direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             //xRaw = Input.GetAxisRaw("Horizontal");
@@ -97,7 +105,7 @@ public class PlayerController : MonoBehaviour
                         RollRegenTimeCount = 0;
                         OnRoll = true;
                         //ToRoll = false;
-                        GetComponent<Rigidbody>().AddForce(RollDirection * RollSpeed, ForceMode.Impulse);
+                        GetComponent<Rigidbody>().AddForce(RollDirection * RollSpeed, ForceMode.VelocityChange);
                         StartCoroutine("RollDelay", RollTime);
                     }
                 }

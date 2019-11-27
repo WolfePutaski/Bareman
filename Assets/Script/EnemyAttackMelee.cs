@@ -10,14 +10,16 @@ public class EnemyAttackMelee : MonoBehaviour
 
     public GameObject AttackHitbox;
 
-    public float ChargeTimerCounting = 1f;
-    public float AttackTimerCounting = 1f;
+    private float ChargeTimerCounting = 1f;
+    private float AttackTimerCounting = 1f;
+    private float AttackDelayTimerCounting = 1f;
 
     public GameObject Target;
 
     public float DetectRange = 1.5f;
     public float AttackChargeTime;
     public float AttackTime;
+    public float AttackDelayTime;
 
     public int AttackDamage = 1;
     public float AttackDash = 1f;
@@ -26,6 +28,9 @@ public class EnemyAttackMelee : MonoBehaviour
     public bool OnChecking = true;
     public bool OnCharging = false;
     public bool OnAttacking = false;
+
+    public int State; //0-Get Close; 1-Get medium; 2-GetFar 
+    public float KeepDistance;
 
 
     // Start is called before the first frame update
@@ -43,6 +48,40 @@ public class EnemyAttackMelee : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //===============
+        //Color Debug
+        //===============
+        {
+            if (OnCharging == true)
+            {
+                Controller.EnemySprite.color = new Color(0f, 255f, 0f);
+            }
+            else if (!Controller.OnStun)
+            {
+                Controller.EnemySprite.color = Color.white;
+            }
+        }
+
+        //===============
+        //State
+        //===============
+        if (State == 0) //Moving to attack
+        {
+            Controller.OnFollow = true;
+        }
+        else if (State != 0)
+        {
+            Controller.OnFollow = false;
+        }
+
+        if (!OnCharging || !OnAttacking || !Controller.OnStun)
+        {
+            if (State == 1)
+            {
+                transform.localPosition = Vector3.MoveTowards(transform.position, Target.transform.position + Vector3.right * KeepDistance * Controller.transform.localScale.x, Controller.WalkSpeed * Time.deltaTime);
+            }
+        }
         //===============
         //Attack Detection
         //===============
@@ -55,10 +94,11 @@ public class EnemyAttackMelee : MonoBehaviour
         if (OnChecking)
         {
 
-                if (Physics.Raycast(transform.position, attackdir , DetectRange, playerLayer))
+                if (Physics.Raycast(transform.position, attackdir + Vector3.right * DetectRange * transform.localScale.x , DetectRange, playerLayer) || AttackDelayTimerCounting < 1)
                 {
                     ChargeTimerCounting = 0f;
                     OnCharging = true;
+                    AttackDelayTimerCounting = 0;
                 }
 
         }
@@ -89,11 +129,15 @@ public class EnemyAttackMelee : MonoBehaviour
         {
             if (ChargeTimerCounting < 1)
             {
+                //Controller.rb.mass = 999;
                 ChargeTimerCounting += Time.deltaTime / AttackChargeTime;
             }
             else
             {
-                GetComponent<Rigidbody>().AddForce(dir * AttackDash, ForceMode.Impulse); //Attack Push
+                //Controller.rb.mass = 5;
+
+
+                GetComponent<Rigidbody>().AddForce(attackdir * AttackDash, ForceMode.VelocityChange); //Attack Push
                 AttackTimerCounting = 0f;
                 OnAttacking = true;
                 OnCharging = false;
@@ -118,23 +162,36 @@ public class EnemyAttackMelee : MonoBehaviour
 
         if (OnAttacking == true)
         {
+
+
             if (AttackTimerCounting < 1)
             {
                 AttackHitbox.SetActive(true);
                 AttackTimerCounting += Time.deltaTime / AttackTime;
             }
+
+
             else
             {
                 OnAttacking = false;
                 AttackHitbox.SetActive(false);
                 Controller.OnFollow = true;
             }
+
+            
         }
+
+        if (AttackDelayTimerCounting < 1)
+        {
+            OnChecking = false;
+            AttackDelayTimerCounting += Time.deltaTime / AttackDelayTime;
+        }
+
 
         //===============
         //Hitbox
         //===============
-        
+
     }
 
     private void OnTriggerEnter(Collider other)

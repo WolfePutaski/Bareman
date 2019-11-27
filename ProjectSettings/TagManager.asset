@@ -21,7 +21,7 @@ TagManager:
   - Enemy
   - AttackHitBox
   - Ground
-  - 
+  - Wall
   - 
   - 
   - 
@@ -42,6 +42,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Ground
+    uniqueID: 2893925555
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

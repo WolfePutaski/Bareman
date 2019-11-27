@@ -8,16 +8,20 @@ public class EnemyAttackRanged : MonoBehaviour
     private Vector3 dir;
     public EnemyController Controller;
 
+    public Color charging;
+
     public GameObject Projectile;
 
-    public float ChargeTimerCounting = 1f;
-    public float AttackTimerCounting = 1f;
+    private float ChargeTimerCounting = 1f;
+    private float AttackTimerCounting = 1f;
+    private float AttackDelayTimerCounting = 1f;
 
     public GameObject Target;
 
     public float DetectRange = 5f;
     public float AttackChargeTime;
     public float AttackTime;
+    public float AttackDelayTime;
 
     public int AttackDamage = 1;
     public float AttackPushForce = 10f;
@@ -33,11 +37,25 @@ public class EnemyAttackRanged : MonoBehaviour
 
         ChargeTimerCounting = 1f;
         AttackTimerCounting = 1f;
+        AttackDelayTimerCounting = 1f;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //===============
+        //Color Debug
+        //===============
+        {
+            if (OnCharging == true)
+            {
+                Controller.EnemySprite.color = new Color(0f, 255f, 0f);
+            }
+            else if (!Controller.OnStun)
+            {
+                Controller.EnemySprite.color = Color.white;
+            }
+        }
         //===============
         //Attack Detection
         //===============
@@ -52,7 +70,8 @@ public class EnemyAttackRanged : MonoBehaviour
      
                 if (Physics.Raycast(transform.position, attackdir, DetectRange, playerLayer))
                 {
-                    ChargeTimerCounting = 0f;
+
+                ChargeTimerCounting = 0f;
                     OnCharging = true;
                 }
 
@@ -87,6 +106,7 @@ public class EnemyAttackRanged : MonoBehaviour
             {
                 Fire();
 
+                AttackDelayTimerCounting = 0f;
                 AttackTimerCounting = 0f;
                 OnAttacking = true;
                 OnCharging = false;
@@ -118,6 +138,12 @@ public class EnemyAttackRanged : MonoBehaviour
             {
                 OnAttacking = false;
             }
+        }
+
+        if (AttackDelayTimerCounting < 1)
+        {
+            OnChecking = false;
+            AttackDelayTimerCounting += Time.deltaTime / AttackDelayTime;
         }
     }
 
