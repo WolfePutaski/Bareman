@@ -41,13 +41,13 @@ public class CameraController : MonoBehaviour
 
         {
 
-            if (Mathf.Abs(offset.x) <= MaxOffsetX)
+            //if (Mathf.Abs(offset.x) <= MaxOffsetX)
             FollowPlayer = true;
 
-            if (offset.x > MaxOffsetX)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(Player.transform.position.x - MaxOffsetX, transform.position.y, transform.position.z), Time.deltaTime);
-            }
+            //if (offset.x > MaxOffsetX)
+            //{
+            //    transform.position = Vector3.Lerp(transform.position, new Vector3(Player.transform.position.x - MaxOffsetX, transform.position.y, transform.position.z), offset.x*Time.deltaTime);
+            //}
 
         }
 
@@ -56,13 +56,18 @@ public class CameraController : MonoBehaviour
             FollowPlayer = false;
         }
 
+    }
+
+    void FixedUpdate()
+    {
         if (FollowPlayer)
         {
             if (Mathf.Abs(offset.x) > MaxOffsetX)
             {
                 if (offset.x >= MaxOffsetX)
                 {
-                    transform.position = new Vector3(Player.transform.position.x - MaxOffsetX, transform.position.y, transform.position.z);
+                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(Player.transform.position.x - MaxOffsetX, transform.position.y, transform.position.z), offset.x * Time.deltaTime * 0.95f);
+                    //transform.position = new Vector3(Player.transform.position.x - MaxOffsetX, transform.position.y, transform.position.z);
                 }
                 //if (offset.x <= -MaxOffsetX)
                 //{

@@ -10,7 +10,7 @@ public class EnemyAttackMelee : MonoBehaviour
 
     public GameObject AttackHitbox;
 
-    private float ChargeTimerCounting = 1f;
+    public float ChargeTimerCounting = 1f;
     private float AttackTimerCounting = 1f;
     private float AttackDelayTimerCounting = 1f;
 
@@ -29,15 +29,27 @@ public class EnemyAttackMelee : MonoBehaviour
     public bool OnCharging = false;
     public bool OnAttacking = false;
 
-    public int State; //0-Get Close; 1-Get medium; 2-GetFar 
-    public float KeepDistance;
+    public bool IsEngaging;
+    public float GetClose;
+    public float RandomMoveRange;
+
+    public float MaxFreeze = 0.5f;
+    public float MaxMove = 1f;
+    public float TimeMove = 99;
+    public bool OnFreeze = false;
+    public bool OnMove = false;
+    public float TimeFreeze = 0;
+    public float MoveZChance = 0;
+    public bool RandomMove = true;
+    public float RandomRangeInterval = 1f;
+
+    private float randnum = 0;
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        Target = GameObject.Find("PlayerCollider");
-        //Player = GameObject.Find("PlayerCollider");
+        Target = GameObject.Find("Player");
 
         AttackHitbox.SetActive(false);
         ChargeTimerCounting = 1f;
@@ -66,21 +78,83 @@ public class EnemyAttackMelee : MonoBehaviour
         //===============
         //State
         //===============
-        if (State == 0) //Moving to attack
+
+        Controller.OnFollow = (IsEngaging);
+
+        if (IsEngaging) //Moving to attack
         {
-            Controller.OnFollow = true;
-        }
-        else if (State != 0)
-        {
-            Controller.OnFollow = false;
+            Controller.MinRange = GetClose;
+            //RequestAttack();
         }
 
-        if (!OnCharging || !OnAttacking || !Controller.OnStun)
+        if (!IsEngaging && !Controller.OnStun)
         {
-            if (State == 1)
+            OnChecking = false;
+            OnAttacking = false;
+            OnCharging = false;
+            ChargeTimerCounting = 1f;
+            AttackTimerCounting = 1f;
+
+            Controller.MinRange = RandomMoveRange;
+
+
+            if (RandomMove && MoveZChance < 0.5f)
             {
-                transform.localPosition = Vector3.MoveTowards(transform.position, Target.transform.position + Vector3.right * KeepDistance * Controller.transform.localScale.x, Controller.WalkSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position,
+                    new Vector3(transform.position.x + (RandomMoveRange * randnum),
+                    transform.position.y,
+                    transform.position.z - (RandomMoveRange)),
+                    Controller.WalkSpeed * Time.deltaTime);
             }
+            else if (RandomMove && MoveZChance >= 0.5f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position,
+                    new Vector3(transform.position.x + (RandomMoveRange * randnum),
+                    transform.position.y,
+                    transform.position.z + (RandomMoveRange)),
+                    Controller.WalkSpeed * Time.deltaTime);
+            }
+            else if (!RandomMove)
+            {
+                transform.position = Vector3.MoveTowards(transform.position,
+                   new Vector3(transform.position.x + (2 * RandomMoveRange * randnum),
+                   transform.position.y,
+                   transform.position.z + (RandomMoveRange)), 0);
+            }
+
+            if (TimeFreeze < MaxFreeze & !RandomMove)
+            {
+                TimeFreeze += Time.deltaTime;
+            }
+            if (TimeFreeze >= MaxFreeze & !RandomMove) //ActiveOnMove
+            {
+                RandomMoveRange = Random.Range(RandomMoveRange - RandomRangeInterval, RandomMoveRange + RandomRangeInterval);
+                MoveZChance = Random.Range(0.0f, 1.0f);
+                TimeMove = 0;
+                //OnFreeze = false;
+                RandomMove = true;
+            }
+            if (TimeMove < MaxMove && RandomMove)
+            {
+                //transform.localPosition = NormalizedDirection * Controller.WalkSpeed * Time.deltaTime;
+                TimeMove += Time.deltaTime;
+            }
+            if (TimeMove >= MaxMove && RandomMove) //ActiveOnFreeze
+            {
+                randnum = Random.Range(-1.0f, 1.0f);
+                TimeFreeze = 0;
+                RandomMove = false;
+
+            }
+
+            //===============
+            //Aggro
+            //===============
+            if (Mathf.Abs(Controller.Direction.x) <= DetectRange*2)
+            {
+                RequestAttack();
+            }
+
         }
         //===============
         //Attack Detection
@@ -94,8 +168,10 @@ public class EnemyAttackMelee : MonoBehaviour
         if (OnChecking)
         {
 
-                if (Physics.Raycast(transform.position, attackdir + Vector3.right * DetectRange * transform.localScale.x , DetectRange, playerLayer) || AttackDelayTimerCounting < 1)
+                if (Physics.Raycast(transform.position, attackdir
+                    , DetectRange, playerLayer) && AttackDelayTimerCounting >= 1)
                 {
+                //RequestAttack();
                     ChargeTimerCounting = 0f;
                     OnCharging = true;
                     AttackDelayTimerCounting = 0;
@@ -111,7 +187,6 @@ public class EnemyAttackMelee : MonoBehaviour
         else if (!Controller.OnStun)
         {
             OnChecking = true;
-            Controller.OnFollow = true;
         }
 
 
@@ -119,6 +194,7 @@ public class EnemyAttackMelee : MonoBehaviour
         {
             ChargeTimerCounting = -1;
             OnCharging = false;
+            CancelAttack();
         }
 
         //===============
@@ -129,7 +205,6 @@ public class EnemyAttackMelee : MonoBehaviour
         {
             if (ChargeTimerCounting < 1)
             {
-                //Controller.rb.mass = 999;
                 ChargeTimerCounting += Time.deltaTime / AttackChargeTime;
             }
             else
@@ -173,9 +248,11 @@ public class EnemyAttackMelee : MonoBehaviour
 
             else
             {
+
                 OnAttacking = false;
                 AttackHitbox.SetActive(false);
                 Controller.OnFollow = true;
+                CancelAttack();
             }
 
             
@@ -183,6 +260,7 @@ public class EnemyAttackMelee : MonoBehaviour
 
         if (AttackDelayTimerCounting < 1)
         {
+
             OnChecking = false;
             AttackDelayTimerCounting += Time.deltaTime / AttackDelayTime;
         }
@@ -191,6 +269,7 @@ public class EnemyAttackMelee : MonoBehaviour
         //===============
         //Hitbox
         //===============
+
 
     }
 
@@ -202,6 +281,28 @@ public class EnemyAttackMelee : MonoBehaviour
             other.SendMessage("ReceiveForce", AttackPushForce);
 
             Debug.Log("Taken Damage");
+
         }
     }
+
+    public void RequestAttack()
+    {
+        Target.SendMessage("GetAttackRequest", gameObject);
+        Debug.Log("Attack Requested");
+
+    }
+
+    public void AllowtoAttack()
+    {
+        IsEngaging = true;
+        Debug.Log("Attack Allowed");
+
+    }
+
+    public void CancelAttack()
+    {
+        IsEngaging = false;
+        Target.SendMessage("CancelAttacker", gameObject);
+    }
+
 }

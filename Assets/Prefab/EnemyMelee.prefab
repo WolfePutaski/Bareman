@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463132389479534997}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5922984043292725628}
@@ -129,13 +129,10 @@ MonoBehaviour:
   HP: 50
   WalkSpeed: 1
   Direction: {x: 0, y: 0, z: 0}
-  rangeTransform: {x: 0, y: 0, z: 0}
   StunType: 0
   StunTimerMax: 0.7
   StunStaggerTimerMax: 0.7
   StunKnockdownTimerMax: 2.5
-  StunTimeCounting: 0
-  OnMove: 0
   OnFollow: 1
   OnStun: 0
   IsWalkingLeft: 0
@@ -145,8 +142,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 2048
-  IsRanged: 0
-  MinRange: 3
+  MinRange: 2
   Target: {fileID: 0}
 --- !u!114 &5922984044388884778
 MonoBehaviour:
@@ -165,9 +161,10 @@ MonoBehaviour:
     m_Bits: 256
   Controller: {fileID: 902264004146912036}
   AttackHitbox: {fileID: 5922984043292725627}
+  ChargeTimerCounting: 1
   Target: {fileID: 0}
-  DetectRange: 1.2
-  AttackChargeTime: 0.4
+  DetectRange: 2
+  AttackChargeTime: 0.3
   AttackTime: 0.3
   AttackDelayTime: 2.5
   AttackDamage: 1
@@ -176,7 +173,18 @@ MonoBehaviour:
   OnChecking: 1
   OnCharging: 0
   OnAttacking: 0
-  State: 0
+  IsEngaging: 0
+  GetClose: 3
+  RandomMoveRange: 0
+  MaxFreeze: 1.2
+  MaxMove: 2.5
+  TimeMove: 99
+  OnFreeze: 0
+  OnMove: 0
+  TimeFreeze: 0
+  MoveZChance: 0
+  RandomMove: 1
+  RandomRangeInterval: 0.5
 --- !u!1 &5922984042972974131
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,13 +209,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5922984042972974131}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
   m_LocalPosition: {x: 0.05, y: 0, z: 0}
-  m_LocalScale: {x: 1.0663, y: 1.0663, z: 1.0663}
+  m_LocalScale: {x: 1.1199733, y: 1.1199733, z: 1.1199733}
   m_Children: []
   m_Father: {fileID: 1463132389479534998}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!212 &5922984042972974133
 SpriteRenderer:
   m_ObjectHideFlags: 0

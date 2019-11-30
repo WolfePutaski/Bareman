@@ -52,13 +52,25 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer PlayerSprite;
     public Animator Animator;
 
+    [Header("AttackRequest")]
+
+    public int MaxMeleeAttackers = 1;
+    public List<GameObject> MeleeAttackers;
+
+    public int MaxRangedAttackers = 1;
+    public List<GameObject> RangedAttackers;
+
+
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         //AttackHitBox.SetActive(false);
         RollCount = MaxRollCount;
         RollRegenTimeCount = 1;
+
+        RangedAttackers = new List<GameObject>();
+        MeleeAttackers = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -89,7 +101,7 @@ public class PlayerController : MonoBehaviour
             Vector3 Direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             //xRaw = Input.GetAxisRaw("Horizontal");
             //zRaw = Input.GetAxisRaw("Vertical");
-            GetComponent<Rigidbody>().AddForce(Direction * WalkSpeed * Time.deltaTime, ForceMode.VelocityChange);
+            GetComponent<Rigidbody>().AddForce(Direction * WalkSpeed * Time.deltaTime,ForceMode.VelocityChange);
             //ToRoll = true;
             //StartCoroutine("SetTabDelay", RollTabInterval);
 
@@ -271,5 +283,44 @@ public class PlayerController : MonoBehaviour
         gameObject.tag = "Player";
         gameObject.layer = 8;
 
+    }
+
+    public void GetAttackRequest(GameObject requestor)
+    {
+        if (MeleeAttackers.Count < MaxMeleeAttackers)
+        {
+            if(!MeleeAttackers.Contains(requestor))
+            {
+                requestor.SendMessage("AllowtoAttack");
+                MeleeAttackers.Add(requestor);
+                Debug.Log("Attack Allowing");
+            }
+        }
+        else { }
+    }
+    public void CancelAttacker(GameObject requestor)
+    {
+        MeleeAttackers.Remove(requestor);
+    }
+
+    public void GetRangedAttackRequest(GameObject requestor)
+    {
+        if (RangedAttackers.Count < MaxRangedAttackers)
+        {
+            if (!RangedAttackers.Contains(requestor))
+            {
+                {
+                    requestor.SendMessage("AllowtoAttack");
+                }
+                RangedAttackers.Add(requestor);
+                Debug.Log("Attack Allowing");
+            }
+        }
+        else { }
+    }
+    public void CancelRangedAttacker(GameObject requestor)
+    {
+
+        RangedAttackers.Remove(requestor);
     }
 }

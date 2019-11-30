@@ -13,8 +13,6 @@ public class EnemyController : MonoBehaviour
     public float WalkSpeed = 300.5f;
 
     public Vector3 Direction;
-    public Vector3 rangeTransform;
-
 
     public float StunType; //For different stun type
     public float StunTimerMax;
@@ -22,12 +20,12 @@ public class EnemyController : MonoBehaviour
     public float StunStaggerTimerMax;
     public float StunKnockdownTimerMax;
 
-    public float StunTimeCounting;
+    private float StunTimeCounting;
 
-    public bool OnMove = false;
     public bool OnFollow = false;
     public bool OnStun;
     public bool IsWalkingLeft = false;
+    public bool IsOutside;
 
     public Rigidbody rb;
 
@@ -35,29 +33,49 @@ public class EnemyController : MonoBehaviour
     public float groundCheckRange;
     public LayerMask groundLayer;
 
-    public bool IsRanged;
     public float MinRange = 3f;
-
-
-
-    //=======
-    // Attack
-    //=======
     public GameObject Target;
+    public GameObject Camera;
 
 
-    // Start is called before the first frame update
-    void Start()
+    public GameObject[] Walls;
+
+
+    void Awake()
     {
         groundCheckRange = transform.position.y + 0.1f;
 
         StunTimeCounting = 1f;
         Target = GameObject.Find("Player");
+        Camera = GameObject.Find("Main Camera");
+
+        Walls = GameObject.FindGameObjectsWithTag("Wall");
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        //=========
+        // Wall Collider
+        //=========
+        float OnScreenPos = Mathf.Abs(transform.position.x) - Camera.transform.position.x;
+
+        Collider col = gameObject.GetComponent<Collider>();
+        if (Mathf.Abs(OnScreenPos) <= 5)
+        {
+            for (int i = 0; i < Walls.Length; i++)
+            {
+                Collider wall = Walls[i].GetComponent<Collider>();
+                Physics.IgnoreCollision(col, wall,false);
+            }
+        }
+        IsOutside = (Mathf.Abs(OnScreenPos) > 5);
+
+        if (IsOutside)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(Camera.transform.position.x, transform.position.y, transform.position.z), WalkSpeed * Time.deltaTime);
+        }
 
         //=========
         // Grounded
@@ -67,6 +85,8 @@ public class EnemyController : MonoBehaviour
         if (IsGrounded)
         {
             rb.drag = 12;
+            rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+
         }
         else if (!IsGrounded)
         {
@@ -78,47 +98,49 @@ public class EnemyController : MonoBehaviour
         // Movement
         //=========
 
-        rangeTransform = new Vector3(Target.transform.position.x - (MinRange * Direction.normalized.x), Target.transform.position.y, Target.transform.position.z);
-        rangeTransform.y = 0;
+        Direction = new Vector3( Target.transform.position.x - transform.position.x, transform.position.y, Target.transform.position.z - transform.position.z);
 
-
-        Direction = Target.transform.position - transform.position;
-        Direction.y = 0;
-
-        if (OnFollow)
+        if (OnFollow && !IsOutside)
         {
-            if (IsRanged)
-            {
+            
+                //if (Mathf.Abs(Direction.z) <= MinRange && Mathf.Abs(Direction.x) <= MinRange)
+                //{
+                //    transform.position = Vector3.MoveTowards(transform.position , new Vector3(Target.transform.position.x - (MinRange * transform.localScale.normalized.x), transform.position.y, Target.transform.position.z), WalkSpeed * Time.deltaTime);
+                //}
+                //else
+                //{
+                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(Target.transform.position.x - (MinRange * transform.localScale.normalized.x), transform.position.y, Target.transform.position.z), WalkSpeed * Time.deltaTime);
 
-                transform.position = Vector3.MoveTowards(transform.position, rangeTransform, WalkSpeed * Time.deltaTime);
-            }
-            else
-            {
-                transform.position = Vector3.MoveTowards(transform.position, Target.transform.position, WalkSpeed * Time.deltaTime);
+                //}
 
-            }
+            
+        }
 
 
-            //=========
-            // Turninng
-            //=========
+        //=========
+        // Inside Wall
+        //=========
 
-            if (IsWalkingLeft == false && Direction.x < 0)
-            {
-                transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
-                IsWalkingLeft = true;
-            }
-            else if (IsWalkingLeft == true && Direction.x > 0)
-            {
-                transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
-                IsWalkingLeft = false;
 
-            }
+        //=========
+        // Turninng
+        //=========
+
+        if (IsWalkingLeft == false && Direction.x < 0)
+        {
+            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            IsWalkingLeft = true;
+        }
+        else if (IsWalkingLeft == true && Direction.x > 0)
+        {
+            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            IsWalkingLeft = false;
+
         }
 
 
 
-        
+
 
         //=========
         // Stun
@@ -135,10 +157,7 @@ public class EnemyController : MonoBehaviour
                 StunTimeCounting += Time.deltaTime / StunTimerMax;
 
             }
-            else if (StunTimeCounting >= 1)
-            {
-                OnStun = false;
-            }
+
         }
 
         if (StunType == 1)
@@ -147,21 +166,25 @@ public class EnemyController : MonoBehaviour
             if (StunTimeCounting < 1)
             {
                 EnemySprite.color = Color.red;
-
-                gameObject.GetComponent<CapsuleCollider>().center = new Vector3(0,-1.8f,0);
+                EnemySprite.transform.localPosition = new Vector3(0, -1.3f, 0);
+                gameObject.GetComponent<CapsuleCollider>().center = new Vector3(0,-1.3f,0);
                 OnStun = true;
                 StunTimeCounting += Time.deltaTime / StunTimerMax;
 
             }
             else if (StunTimeCounting >= 1)
             {
+                EnemySprite.transform.localPosition = new Vector3(0,0, 0);
                 gameObject.GetComponent<CapsuleCollider>().center = new Vector3(0, 0f, 0);
-
-                OnStun = false;
-
             }
         }
 
+        if (OnStun && StunTimeCounting >= 1)
+        {
+            OnFollow = true;
+            OnStun = false;
+            //enemysprite.color = color.white;
+        }
         //=========
         // Follow Check
         //=========
@@ -170,11 +193,6 @@ public class EnemyController : MonoBehaviour
         {
             OnFollow = false;
             
-        }
-        else
-        {
-            OnFollow = true;
-            //enemysprite.color = color.white;
         }
 
     }

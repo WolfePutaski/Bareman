@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3799068914889960773}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.05, y: 0, z: 0}
-  m_LocalScale: {x: 0.34008574, y: 0.34008574, z: 0.34008574}
+  m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.36974734, y: 0.36974734, z: 0.36974734}
   m_Children: []
   m_Father: {fileID: 8270223756191035616}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!212 &3799068914889960771
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -109,7 +109,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8270223756191035619}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.699999, y: 3.05, z: -10.199999}
+  m_LocalPosition: {x: 0, y: 1.109, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3799068914889960770}
@@ -207,13 +207,10 @@ MonoBehaviour:
   HP: 50
   WalkSpeed: 1
   Direction: {x: 0, y: 0, z: 0}
-  rangeTransform: {x: 0, y: 0, z: 0}
   StunType: 0
   StunTimerMax: 0.7
   StunStaggerTimerMax: 0.7
   StunKnockdownTimerMax: 2.5
-  StunTimeCounting: 0
-  OnMove: 0
   OnFollow: 0
   OnStun: 0
   IsWalkingLeft: 0
@@ -223,7 +220,6 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 2048
-  IsRanged: 1
   MinRange: 4
   Target: {fileID: 0}
 --- !u!114 &6769093275690586345
@@ -245,8 +241,8 @@ MonoBehaviour:
   charging: {r: 0, g: 1, b: 0.04085064, a: 1}
   Projectile: {fileID: 5888632097589321266, guid: 96548ece59eb38a44a410b1c680ef74e,
     type: 3}
+  ChargeTimerCounting: 1
   Target: {fileID: 0}
-  DetectRange: 5
   AttackChargeTime: 0.7
   AttackTime: 0.3
   AttackDelayTime: 1.5
@@ -255,3 +251,14 @@ MonoBehaviour:
   OnChecking: 1
   OnCharging: 0
   OnAttacking: 0
+  IsEngaging: 0
+  RandomMoveRange: 0
+  MaxFreeze: 0.5
+  MaxMove: 1
+  TimeMove: 99
+  OnFreeze: 0
+  OnMove: 0
+  TimeFreeze: 0
+  MoveZChance: 0
+  RandomMove: 1
+  RandomRangeInterval: 1

@@ -5,20 +5,19 @@ using UnityEngine;
 public class EnemyAttackRanged : MonoBehaviour
 {
     public LayerMask playerLayer;
-    private Vector3 dir;
     public EnemyController Controller;
 
     public Color charging;
 
     public GameObject Projectile;
 
-    private float ChargeTimerCounting = 1f;
+    public float ChargeTimerCounting = 1f;
     private float AttackTimerCounting = 1f;
     private float AttackDelayTimerCounting = 1f;
 
     public GameObject Target;
 
-    public float DetectRange = 5f;
+    private float DetectRange;
     public float AttackChargeTime;
     public float AttackTime;
     public float AttackDelayTime;
@@ -30,10 +29,26 @@ public class EnemyAttackRanged : MonoBehaviour
     public bool OnCharging = false;
     public bool OnAttacking = false;
 
+    public bool IsEngaging;
+    public float RandomMoveRange;
+
+    public float MaxFreeze = 0.5f;
+    public float MaxMove = 1f;
+    public float TimeMove = 99;
+    public bool OnFreeze = false;
+    public bool OnMove = false;
+    public float TimeFreeze = 0;
+    public float MoveZChance = 0;
+    public bool RandomMove = true;
+    public float RandomRangeInterval = 1f;
+
+
+    private float randnum = 0;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        //Target = GameObject.Find("PlayerCollider");
+        Target = GameObject.Find("Player");
 
         ChargeTimerCounting = 1f;
         AttackTimerCounting = 1f;
@@ -43,110 +58,186 @@ public class EnemyAttackRanged : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DetectRange = Controller.MinRange;
+
         //===============
         //Color Debug
         //===============
+        
+        if (OnCharging == true)
         {
-            if (OnCharging == true)
-            {
-                Controller.EnemySprite.color = new Color(0f, 255f, 0f);
-            }
-            else if (!Controller.OnStun)
-            {
-                Controller.EnemySprite.color = Color.white;
-            }
+            Controller.EnemySprite.color = new Color(0f, 255f, 0f);
         }
-        //===============
-        //Attack Detection
-        //===============
-
-        dir = Vector3.Normalize(Controller.Direction);
-        Vector3 attackdir = new Vector3(transform.localScale.x, 0, 0);
-
-        Debug.DrawRay(transform.position, attackdir * DetectRange, Color.cyan); //Debug Raycast
-
-        if (OnChecking)
+        else if (!Controller.OnStun)
         {
-     
-                if (Physics.Raycast(transform.position, attackdir, DetectRange, playerLayer))
+            Controller.EnemySprite.color = Color.white;
+        }
+
+
+        //===============
+        //State
+        //===============
+
+        Controller.OnFollow = (IsEngaging);
+        OnChecking = (IsEngaging);
+
+        if (!IsEngaging && !Controller.OnStun)
+        {
+            OnAttacking = false;
+            OnCharging = false;
+            ChargeTimerCounting = 1f;
+            AttackTimerCounting = 1f;
+
+            if (RandomMove && MoveZChance < 0.5f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position,
+                    new Vector3(transform.position.x + (RandomMoveRange * randnum),
+                    transform.position.y,
+                    transform.position.z - (RandomMoveRange)),
+                    Controller.WalkSpeed * Time.deltaTime);
+            }
+            else if (RandomMove && MoveZChance >= 0.5f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position,
+                    new Vector3(transform.position.x + (RandomMoveRange * randnum),
+                    transform.position.y,
+                    transform.position.z + (RandomMoveRange)),
+                    Controller.WalkSpeed * Time.deltaTime);
+            }
+            else if (!RandomMove)
+            {
+                transform.position = Vector3.MoveTowards(transform.position,
+                   new Vector3(transform.position.x + (2 * RandomMoveRange * randnum),
+                   transform.position.y,
+                   transform.position.z + (RandomMoveRange)), 0);
+            }
+
+            if (TimeFreeze < MaxFreeze & !RandomMove)
+            {
+                TimeFreeze += Time.deltaTime;
+            }
+            if (TimeFreeze >= MaxFreeze & !RandomMove) //ActiveOnMove
+            {
+                RandomMoveRange = Random.Range(RandomMoveRange - RandomRangeInterval, RandomMoveRange + RandomRangeInterval);
+                MoveZChance = Random.Range(0.0f, 1.0f);
+                TimeMove = 0;
+                //OnFreeze = false;
+                RandomMove = true;
+            }
+            if (TimeMove < MaxMove && RandomMove)
+            {
+                TimeMove += Time.deltaTime;
+            }
+            if (TimeMove >= MaxMove && RandomMove) //ActiveOnFreeze
+            {
+                randnum = Random.Range(-1.0f, 1.0f);
+                TimeFreeze = 0;
+                RandomMove = false;
+
+            }
+
+            //===============
+            //Aggro
+            //===============
+            if (Mathf.Abs(Controller.Direction.x) <= DetectRange * 2)
+            {
+                RequestAttack();
+            }
+
+
+        }
+            //===============
+            //Attack Detection
+            //===============
+
+            Vector3 attackdir = new Vector3(transform.localScale.x, 0, 0);
+
+            Debug.DrawRay(transform.position, attackdir * DetectRange, Color.cyan); //Debug Raycast
+
+            if (OnChecking)
+            {
+
+                if (Physics.Raycast(transform.position, attackdir, DetectRange, playerLayer) && !OnCharging && AttackDelayTimerCounting >= 1)
                 {
 
-                ChargeTimerCounting = 0f;
+                    ChargeTimerCounting = 0f;
                     OnCharging = true;
                 }
 
-        }
-        if (OnCharging || OnAttacking || Controller.OnStun)
-        {
-            OnChecking = false;
-            Controller.OnFollow = false;
-        }
-        else if(!Controller.OnStun)
-        {
-            OnChecking = true;
-            Controller.OnFollow = true;
-        }
-
-        if (Controller.OnStun)
-        {
-            ChargeTimerCounting = -1;
-            OnCharging = false;
-        }
-        //===============
-        //Charging
-        //===============
-
-        if (OnCharging == true)
-        {
-            if (ChargeTimerCounting < 1)
-            {
-                ChargeTimerCounting += Time.deltaTime / AttackChargeTime;
             }
-            else
+            if (OnCharging || OnAttacking || Controller.OnStun)
             {
-                Fire();
+                OnChecking = false;
+                Controller.OnFollow = false;
+            }
+            else if (!Controller.OnStun)
+            {
+                OnChecking = true;
+            }
 
-                AttackDelayTimerCounting = 0f;
-                AttackTimerCounting = 0f;
-                OnAttacking = true;
+            if (Controller.OnStun)
+            {
+                ChargeTimerCounting = -1;
                 OnCharging = false;
-            }
+                CancelAttack();
 
         }
+            //===============
+            //Charging
+            //===============
 
-        //===============
-        //Attacking
-        //===============
-
-        if (transform.localScale.x < 0 && AttackPushForce > 0)
-        {
-            AttackPushForce = -AttackPushForce;
-
-        }
-        else if (transform.localScale.x > 0 && AttackPushForce < 0)
-        {
-            AttackPushForce = -AttackPushForce;
-        }
-
-        if (OnAttacking == true)
-        {
-            if (AttackTimerCounting < 1)
+            if (OnCharging == true)
             {
-                AttackTimerCounting += Time.deltaTime / AttackTime;
-            }
-            else
-            {
-                OnAttacking = false;
-            }
-        }
+                if (ChargeTimerCounting < 1)
+                {
+                    ChargeTimerCounting += Time.deltaTime / AttackChargeTime;
+                }
+                else
+                {
+                    Fire();
 
-        if (AttackDelayTimerCounting < 1)
-        {
-            OnChecking = false;
-            AttackDelayTimerCounting += Time.deltaTime / AttackDelayTime;
-        }
+                    AttackDelayTimerCounting = 0f;
+                    AttackTimerCounting = 0f;
+                    OnAttacking = true;
+                    OnCharging = false;
+                }
+
+            }
+
+            //===============
+            //Attacking
+            //===============
+
+            if (transform.localScale.x < 0 && AttackPushForce > 0)
+            {
+                AttackPushForce = -AttackPushForce;
+
+            }
+            else if (transform.localScale.x > 0 && AttackPushForce < 0)
+            {
+                AttackPushForce = -AttackPushForce;
+            }
+
+            if (OnAttacking == true)
+            {
+                if (AttackTimerCounting < 1)
+                {
+                    AttackTimerCounting += Time.deltaTime / AttackTime;
+                }
+                else
+                {
+                    OnAttacking = false;
+                }
+            }
+
+            if (AttackDelayTimerCounting < 1)
+            {
+                OnChecking = false;
+                AttackDelayTimerCounting += Time.deltaTime / AttackDelayTime;
+            }
+
     }
-
+    
     public void Fire()
     {
         Projectile.GetComponent<EnemyProjectileController>().isMovingLeft = Controller.IsWalkingLeft;
@@ -156,5 +247,29 @@ public class EnemyAttackRanged : MonoBehaviour
         GameObject NewProjectile =
             Instantiate(Projectile, transform.position,
             Quaternion.identity);
+
+        CancelAttack();
+    }
+
+
+    public void RequestAttack()
+    {
+        Target.SendMessage("GetRangedAttackRequest", gameObject);
+        Debug.Log("Ranged Attack Requested");
+
+    }
+
+    public void AllowtoAttack()
+    {
+        IsEngaging = true;
+        Debug.Log("Ranged Attack Allowed");
+
+    }
+
+    public void CancelAttack()
+    {
+        IsEngaging = false;
+        Target.SendMessage("CancelRangedAttacker", gameObject);
     }
 }
+

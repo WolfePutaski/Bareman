@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2785386070057708965}
   m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
   m_LocalPosition: {x: 0.04, y: 0, z: 0}
-  m_LocalScale: {x: 0.171772, y: 0.171772, z: 0.171772}
+  m_LocalScale: {x: 0.21424, y: 0.21424, z: 0.21424}
   m_Children: []
   m_Father: {fileID: 5256630372203053682}
   m_RootOrder: 1
@@ -123,8 +123,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3707682673025739175}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.157, y: 0, z: 0}
+  m_LocalScale: {x: 1.1921345, y: 1, z: 0.3451883}
   m_Children:
   - {fileID: 5830098372403975191}
   - {fileID: 2163167803251784740}
@@ -161,8 +161,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5256630372203053641}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.11, y: 3.2999997, z: -3.63}
-  m_LocalScale: {x: 1.1441, y: 1.1441, z: 1.1441}
+  m_LocalPosition: {x: -9.11, y: 1.35, z: -3.63}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8945047076608576830}
   - {fileID: 2785386070057708966}
@@ -258,8 +258,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
   HP: 15
-  WalkSpeed: 50
-  RollSpeed: 50
+  WalkSpeed: 35
+  RollSpeed: 30
   MoveDirection: {x: 0, y: 0, z: 0}
   Velocity: {x: 0, y: 0, z: 0}
   rb: {fileID: 5256630372203053646}
@@ -267,7 +267,7 @@ MonoBehaviour:
   MaxInvincibleTime: 0.5
   InvincibleTime: 1
   IsGrounded: 0
-  groundCheckRange: 1.6
+  groundCheckRange: 2
   groundLayer:
     serializedVersion: 2
     m_Bits: 2048
@@ -278,7 +278,6 @@ MonoBehaviour:
   RollTabInterval: 0.2
   RollTime: 0.5
   MaxRollRegenTime: 2
-  RollRegenTimeCount: 1
   RollCount: 3
   MaxRollCount: 3
   PlayerSprite: {fileID: 2785386070057708967}
@@ -307,20 +306,20 @@ MonoBehaviour:
   PunchFreeze: 0.13
   PunchDamage: 10
   PunchDash: 4
-  PunchPushForce: 25
+  PunchPushForce: 5
   PunchBlowType: 0
   S0Freeze: 0.8
   S0Damage: 20
   S0Dash: 0
   S0PushForce: 0
-  S1Freeze: 0.5
+  S1Freeze: 0.13
   S1Damage: 20
-  S1Dash: 80
-  S1PushForce: 85
-  S1BlowType: 2
+  S1Dash: 120
+  S1PushForce: 250
+  S1BlowType: 1
   IsTired: 0
   TiringTimeCount: 0
-  TiringTimeMax: 1
+  TiringTimeMax: 0.75
   ComboCount: 0
   MaximumComboCount: 4
   ComboEndCooldownTime: 0.4

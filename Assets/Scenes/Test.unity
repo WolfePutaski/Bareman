@@ -257,9 +257,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f528f75edc46aad46b2b91d5e58adbc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CanFollow: 1
   FollowPlayer: 0
   Player: {fileID: 715798177}
   Position: {x: 0, y: 0, z: 0}
+  MaxOffsetX: 0
+  NewMaxOffsetX: 0
+  offset: {x: 0, y: 0, z: 0}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -633,6 +637,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enemy: {fileID: 0}
+  Camera: {fileID: 0}
+  CamController: {fileID: 0}
+  SpawnLocation: {x: 0, y: 0, z: 0}
 --- !u!4 &1814052349
 Transform:
   m_ObjectHideFlags: 0

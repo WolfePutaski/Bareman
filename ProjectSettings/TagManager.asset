@@ -8,6 +8,7 @@ TagManager:
   - PlayerAttack
   - EnemyAttack
   - PlayerDodge
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -22,8 +23,8 @@ TagManager:
   - AttackHitBox
   - Ground
   - Wall
-  - 
-  - 
+  - EnemyCollision
+  - WallSide
   - 
   - 
   - 
