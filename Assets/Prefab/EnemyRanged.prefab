@@ -214,6 +214,7 @@ MonoBehaviour:
   OnFollow: 0
   OnStun: 0
   IsWalkingLeft: 0
+  IsOutside: 0
   rb: {fileID: 8270223756191035620}
   IsGrounded: 0
   groundCheckRange: 2
@@ -222,6 +223,11 @@ MonoBehaviour:
     m_Bits: 2048
   MinRange: 4
   Target: {fileID: 0}
+  Camera: {fileID: 0}
+  Walls: []
+  WallFront: {fileID: 0}
+  OnScreenXPos: 0
+  col: {fileID: 8270223756191035617}
 --- !u!114 &6769093275690586345
 MonoBehaviour:
   m_ObjectHideFlags: 0

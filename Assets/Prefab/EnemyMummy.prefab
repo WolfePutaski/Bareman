@@ -30,11 +30,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 676828882869752582}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.063, y: 1.262, z: 0}
-  m_LocalScale: {x: 1.1622335, y: 1.1622335, z: 1.1622335}
+  m_LocalPosition: {x: 0, y: 1.12, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5699351459232207855}
   - {fileID: 5699351459017051815}
+  - {fileID: 1279445173824238998}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -129,23 +130,28 @@ MonoBehaviour:
   HP: 100
   WalkSpeed: 0.5
   Direction: {x: 0, y: 0, z: 0}
-  rangeTransform: {x: 0, y: 0, z: 0}
   StunType: 0
   StunTimerMax: 0.7
-  StunTimeCounting: 0
-  OnMove: 0
+  StunStaggerTimerMax: 0.7
+  StunKnockdownTimerMax: 2.5
   OnFollow: 1
   OnStun: 0
   IsWalkingLeft: 0
+  IsOutside: 0
   rb: {fileID: 676828882869752577}
   IsGrounded: 0
   groundCheckRange: 1.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 2048
-  IsRanged: 0
   MinRange: 3
   Target: {fileID: 0}
+  Camera: {fileID: 0}
+  Walls: []
+  WallFront: {fileID: 0}
+  WallBack: {fileID: 0}
+  OnScreenXPos: 0
+  col: {fileID: 676828882869752580}
 --- !u!114 &5699351460269908921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,17 +170,58 @@ MonoBehaviour:
   Controller: {fileID: 1274517849975200183}
   AttackHitbox: {fileID: 5699351459232207848}
   ChargeTimerCounting: 1
-  AttackTimerCounting: 1
   Target: {fileID: 0}
-  DetectRange: 1
+  DetectRange: 1.5
   AttackChargeTime: 0.5
   AttackTime: 0.25
-  AttackDamage: 1
+  AttackDelayTime: 3
+  AttackDamage: 3
   AttackDash: 10
   AttackPushForce: 100
   OnChecking: 1
   OnCharging: 0
   OnAttacking: 0
+  IsEngaging: 0
+  RandomMoveRange: 1
+  MaxFreeze: 1.2
+  MaxMove: 2.5
+  TimeMove: 99
+  OnFreeze: 0
+  OnMove: 0
+  TimeFreeze: 0
+  MoveZChance: 0
+  RandomMove: 1
+  RandomRangeInterval: 0.5
+--- !u!1 &3292440240393066211
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1279445173824238998}
+  m_Layer: 9
+  m_Name: Feet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1279445173824238998
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3292440240393066211}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.089, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 676828882869752581}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5699351459017051808
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,7 +233,7 @@ GameObject:
   - component: {fileID: 5699351459017051815}
   - component: {fileID: 5699351459017051814}
   m_Layer: 0
-  m_Name: Bandit
+  m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -199,13 +246,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5699351459017051808}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.12, y: 0.12, z: 0.1}
+  m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
+  m_LocalPosition: {x: 0, y: 0.222, z: 0.059}
+  m_LocalScale: {x: 0.14377473, y: 0.15622562, z: 0.11981228}
   m_Children: []
   m_Father: {fileID: 676828882869752581}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!212 &5699351459017051814
 SpriteRenderer:
   m_ObjectHideFlags: 0

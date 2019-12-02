@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CombatTrigger.cs" />
     <Compile Include="Assets\Script\AggroDetection.cs" />
     <Compile Include="Assets\Script\BossController.cs" />
     <Compile Include="Assets\Script\CameraController.cs" />

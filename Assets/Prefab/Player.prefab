@@ -258,7 +258,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
   HP: 15
-  WalkSpeed: 35
+  WalkSpeed: 1.7
   RollSpeed: 30
   MoveDirection: {x: 0, y: 0, z: 0}
   Velocity: {x: 0, y: 0, z: 0}
@@ -282,6 +282,10 @@ MonoBehaviour:
   MaxRollCount: 3
   PlayerSprite: {fileID: 2785386070057708967}
   Animator: {fileID: 622268562}
+  MaxMeleeAttackers: 1
+  MeleeAttackers: []
+  MaxRangedAttackers: 1
+  RangedAttackers: []
 --- !u!114 &2785386071839465200
 MonoBehaviour:
   m_ObjectHideFlags: 0

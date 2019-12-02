@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour
         // Grounded
         //=========
 
+
         IsGrounded = Physics.Raycast(transform.position, -Vector3.up, groundCheckRange, groundLayer);
 
         if (IsGrounded)
@@ -98,10 +99,10 @@ public class PlayerController : MonoBehaviour
 
         if (GetComponent<PlayerAttack>().IsAttacking == false && GetComponent<PlayerAttack>().IsTired == false && IsGrounded && !IsInvincible) // Moving Condition
         {
-            Vector3 Direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            Vector3 Direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
             //xRaw = Input.GetAxisRaw("Horizontal");
             //zRaw = Input.GetAxisRaw("Vertical");
-            GetComponent<Rigidbody>().AddForce(Direction * WalkSpeed * Time.deltaTime,ForceMode.VelocityChange);
+            GetComponent<Rigidbody>().AddForce(Direction * WalkSpeed,ForceMode.VelocityChange);
             //ToRoll = true;
             //StartCoroutine("SetTabDelay", RollTabInterval);
 
@@ -287,6 +288,7 @@ public class PlayerController : MonoBehaviour
 
     public void GetAttackRequest(GameObject requestor)
     {
+        MeleeAttackers.RemoveAll(item => item == null);
         if (MeleeAttackers.Count < MaxMeleeAttackers)
         {
             if(!MeleeAttackers.Contains(requestor))
@@ -305,6 +307,8 @@ public class PlayerController : MonoBehaviour
 
     public void GetRangedAttackRequest(GameObject requestor)
     {
+        RangedAttackers.RemoveAll(item => item == null);
+
         if (RangedAttackers.Count < MaxRangedAttackers)
         {
             if (!RangedAttackers.Contains(requestor))

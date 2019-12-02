@@ -139,7 +139,7 @@ public class EnemyAttackRanged : MonoBehaviour
             //===============
             //Aggro
             //===============
-            if (Mathf.Abs(Controller.Direction.x) <= DetectRange * 2)
+            if (GameObject.Find("Player") && !Controller.IsOutside)
             {
                 RequestAttack();
             }
@@ -254,6 +254,7 @@ public class EnemyAttackRanged : MonoBehaviour
 
     public void RequestAttack()
     {
+
         Target.SendMessage("GetRangedAttackRequest", gameObject);
         Debug.Log("Ranged Attack Requested");
 

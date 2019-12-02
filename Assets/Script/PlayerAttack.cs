@@ -228,7 +228,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void Attack()
     {
-        GetComponent<Rigidbody>().AddForce(Vector3.right * transform.localScale.x * AttackDash, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(Vector3.right * transform.localScale.x * AttackDash, ForceMode.Impulse);
         ComboCount++;
         ComboIntervalCounting = -99;
         IsAttacking = true;

@@ -39,6 +39,16 @@ public class EnemyController : MonoBehaviour
 
 
     public GameObject[] Walls;
+    public GameObject WallFront;
+    public GameObject WallBack;
+
+
+    public float OnScreenXPos;
+
+    private Vector3 DefaultCenter;
+    private float DefaultHeight;
+
+    public CapsuleCollider col;
 
 
     void Awake()
@@ -49,30 +59,43 @@ public class EnemyController : MonoBehaviour
         Target = GameObject.Find("Player");
         Camera = GameObject.Find("Main Camera");
 
+        col = gameObject.GetComponent<CapsuleCollider>();
+
         Walls = GameObject.FindGameObjectsWithTag("Wall");
-    }
+        DefaultCenter = col.center;
+        DefaultHeight = col.height;
+
+        WallFront = GameObject.Find("WallFront");
+        WallBack = GameObject.Find("WallBack");
+
+}
 
     // Update is called once per frame
     void Update()
     {
 
-        //=========
-        // Wall Collider
-        //=========
-        float OnScreenPos = Mathf.Abs(transform.position.x) - Camera.transform.position.x;
+        ////=========
+        //// Wall Collider
+        ////=========
 
-        Collider col = gameObject.GetComponent<Collider>();
-        if (Mathf.Abs(OnScreenPos) <= 5)
-        {
-            for (int i = 0; i < Walls.Length; i++)
-            {
-                Collider wall = Walls[i].GetComponent<Collider>();
-                Physics.IgnoreCollision(col, wall,false);
-            }
-        }
-        IsOutside = (Mathf.Abs(OnScreenPos) > 5);
+        //IsOutside = (Mathf.Abs(OnScreenPos) > 5);
+        //OnScreenPos = Mathf.Abs(transform.position.x) - Camera.transform.position.x;
 
-        if (IsOutside)
+        //Collider col = gameObject.GetComponent<Collider>();
+        //    for (int i = 0; i < Walls.Length; i++)
+        //    {
+        //        Collider wall = Walls[i].GetComponent<Collider>();
+        //        Physics.IgnoreCollision(col, wall, (!IsOutside));
+        //    }
+
+
+        Physics.IgnoreCollision(col, WallFront.GetComponent<Collider>(), true);
+        Physics.IgnoreCollision(col, WallBack.GetComponent<Collider>(), true);
+
+        IsOutside = (Mathf.Abs(transform.position.x) > WallFront.transform.position.x - 1.5f);
+
+
+        if (IsOutside && !OnStun)
         {
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(Camera.transform.position.x, transform.position.y, transform.position.z), WalkSpeed * Time.deltaTime);
         }
@@ -102,18 +125,21 @@ public class EnemyController : MonoBehaviour
 
         if (OnFollow && !IsOutside)
         {
-            
-                //if (Mathf.Abs(Direction.z) <= MinRange && Mathf.Abs(Direction.x) <= MinRange)
-                //{
-                //    transform.position = Vector3.MoveTowards(transform.position , new Vector3(Target.transform.position.x - (MinRange * transform.localScale.normalized.x), transform.position.y, Target.transform.position.z), WalkSpeed * Time.deltaTime);
-                //}
-                //else
-                //{
-                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(Target.transform.position.x - (MinRange * transform.localScale.normalized.x), transform.position.y, Target.transform.position.z), WalkSpeed * Time.deltaTime);
 
-                //}
+            //if (Mathf.Abs(Direction.z) <= MinRange && Mathf.Abs(Direction.x) <= MinRange)
+            //{
+            //    transform.position = Vector3.MoveTowards(transform.position , new Vector3(Target.transform.position.x - (MinRange * transform.localScale.normalized.x), transform.position.y, Target.transform.position.z), WalkSpeed * Time.deltaTime);
+            //}
+            //else
+            //{
 
-            
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(Target.transform.position.x - (MinRange * transform.localScale.normalized.x), transform.position.y, Target.transform.position.z), WalkSpeed * Time.deltaTime);
+            //if (Mathf.Abs(Target.transform.position.x - transform.position.x) > MinRange)
+            //rb.AddForce(new Vector3(Mathf.Round(Direction.normalized.x), 0, Mathf.Round(Direction.normalized.z)) * WalkSpeed, ForceMode.VelocityChange);
+            //else { }
+            //}
+
+
         }
 
 
@@ -162,12 +188,16 @@ public class EnemyController : MonoBehaviour
 
         if (StunType == 1)
         {
+
             StunTimerMax = StunKnockdownTimerMax;
             if (StunTimeCounting < 1)
             {
                 EnemySprite.color = Color.red;
                 EnemySprite.transform.localPosition = new Vector3(0, -1.3f, 0);
-                gameObject.GetComponent<CapsuleCollider>().center = new Vector3(0,-1.3f,0);
+
+                gameObject.GetComponent<CapsuleCollider>().center = new Vector3(0, -0.7f, 0);
+                gameObject.GetComponent<CapsuleCollider>().height = gameObject.GetComponent<CapsuleCollider>().radius/2;
+
                 OnStun = true;
                 StunTimeCounting += Time.deltaTime / StunTimerMax;
 
@@ -175,7 +205,9 @@ public class EnemyController : MonoBehaviour
             else if (StunTimeCounting >= 1)
             {
                 EnemySprite.transform.localPosition = new Vector3(0,0, 0);
-                gameObject.GetComponent<CapsuleCollider>().center = new Vector3(0, 0f, 0);
+                gameObject.GetComponent<CapsuleCollider>().center = DefaultCenter;
+                gameObject.GetComponent<CapsuleCollider>().height = DefaultHeight;
+
             }
         }
 
@@ -204,7 +236,6 @@ public class EnemyController : MonoBehaviour
     public void ReceiveDamage(int Damage)//, float Timer)
     {
         //Deactive when receiving damage.
-
 
         HP -= Damage;
         StunTimeCounting = 0;
@@ -235,7 +266,7 @@ public class EnemyController : MonoBehaviour
 
     public void ReceiveForce(float Force)
     {
-        GetComponent<Rigidbody>().AddForce(Vector3.right * Target.transform.localScale.x * Force, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(Vector3.right * Target.transform.localScale.x * Force, ForceMode.Impulse);
     }
 
     public void ReceiveBlow(int BlowType)

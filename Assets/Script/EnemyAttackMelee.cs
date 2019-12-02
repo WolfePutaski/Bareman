@@ -30,7 +30,6 @@ public class EnemyAttackMelee : MonoBehaviour
     public bool OnAttacking = false;
 
     public bool IsEngaging;
-    public float GetClose;
     public float RandomMoveRange;
 
     public float MaxFreeze = 0.5f;
@@ -79,14 +78,6 @@ public class EnemyAttackMelee : MonoBehaviour
         //State
         //===============
 
-        Controller.OnFollow = (IsEngaging);
-
-        if (IsEngaging) //Moving to attack
-        {
-            Controller.MinRange = GetClose;
-            //RequestAttack();
-        }
-
         if (!IsEngaging && !Controller.OnStun)
         {
             OnChecking = false;
@@ -94,9 +85,6 @@ public class EnemyAttackMelee : MonoBehaviour
             OnCharging = false;
             ChargeTimerCounting = 1f;
             AttackTimerCounting = 1f;
-
-            Controller.MinRange = RandomMoveRange;
-
 
             if (RandomMove && MoveZChance < 0.5f)
             {
@@ -150,7 +138,7 @@ public class EnemyAttackMelee : MonoBehaviour
             //===============
             //Aggro
             //===============
-            if (Mathf.Abs(Controller.Direction.x) <= DetectRange*2)
+            if (GameObject.Find("Player") && !Controller.IsOutside)
             {
                 RequestAttack();
             }
@@ -184,7 +172,7 @@ public class EnemyAttackMelee : MonoBehaviour
             OnChecking = false;
             Controller.OnFollow = false;
         }
-        else if (!Controller.OnStun)
+        else if (IsEngaging && !Controller.OnStun)
         {
             OnChecking = true;
         }

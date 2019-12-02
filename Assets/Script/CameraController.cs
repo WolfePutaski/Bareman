@@ -7,7 +7,12 @@ public class CameraController : MonoBehaviour
     public bool CanFollow = true;
 
     public bool FollowPlayer = true;
-    public Transform Player;
+    public GameObject Player;
+    public GameObject WallFront;
+    public Collider PlayerCol;
+    public Collider WallFrontCol;
+
+    public PlayerController PlayerController;
 
     public Vector3 Position;
 
@@ -18,11 +23,15 @@ public class CameraController : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        offset = Player.transform.position - transform.position;
-
+        Player = GameObject.Find("Player");
+        PlayerController = Player.GetComponent<PlayerController>();
         NewMaxOffsetX = Mathf.Abs(offset.x);
+
+        PlayerCol = Player.GetComponent<Collider>();
+        WallFrontCol = WallFront.GetComponent<Collider>();
+
     }
 
     // Update is called once per frame
@@ -44,6 +53,8 @@ public class CameraController : MonoBehaviour
             //if (Mathf.Abs(offset.x) <= MaxOffsetX)
             FollowPlayer = true;
 
+            WallFront.SetActive(PlayerController.RollCount == PlayerController.MaxRollCount);
+
             //if (offset.x > MaxOffsetX)
             //{
             //    transform.position = Vector3.Lerp(transform.position, new Vector3(Player.transform.position.x - MaxOffsetX, transform.position.y, transform.position.z), offset.x*Time.deltaTime);
@@ -54,7 +65,17 @@ public class CameraController : MonoBehaviour
         else if (CanFollow == false)
         {
             FollowPlayer = false;
+            if (Player.transform.position.x < WallFront.transform.position.x - 0.5)
+            {
+                WallFront.SetActive(true);
+            }
+            else
+            {
+                Player.transform.position = new Vector3(WallFront.transform.position.x -0.5f
+                    , Player.transform.position.y, Player.transform.position.z);
+            }
         }
+
 
     }
 
@@ -89,5 +110,7 @@ public class CameraController : MonoBehaviour
             //}
 
         }
+
+        
     }
 }
