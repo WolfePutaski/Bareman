@@ -6,21 +6,32 @@ public class PlayerAttack : MonoBehaviour
 {
     public GameObject Player;
 
+    public PlayerController Controller;
+
     public bool IsAttacking = false;
-    public bool CanAttack = true;
+    private bool CanAttack = true;
 
     //public float AttackRange = 10f;
     //TImer : Combo Counting; Attack Freezing;
 
-    public float AttackDash = 50f;
-    public float AttackFreeze = 1f;
-    public float AttackDamage = 1f;
-    public float AttackPushForce = 10f;
-    public float AttackBlowType = 0;// 0= stagger, 1 = knock
+    private float AttackDash = 50f;
+    private float AttackFreeze = 1f;
+    private float AttackDamage = 1f;
+    private float AttackPushForce = 10f;
+    private float AttackBlowType = 0;// 0= stagger, 1 = knock
+    private bool isAoe;
+    private bool isPushUp;
+    private bool isSpin;
+
+    public GameObject AttackHitBox;
+
 
     public float AttackFreezeTimer;
 
+    
+
     [Header("Normal Attack")]
+    public GameObject FrontHitbox;
     public float PunchFreeze = 0.4f;
     public float PunchDamage = 10f;
     public float PunchDash = 30f;
@@ -35,6 +46,10 @@ public class PlayerAttack : MonoBehaviour
     public float S0Damage = 20f;
     public float S0Dash = 0;
     public float S0PushForce = 0;
+    public int S0BlowType = 2;// 0= stagger, 1 = knock
+
+    public float SpinCount;
+    private float TimeSpinCount = 0;
 
     //Front Special
     [Header("Special Attack Front")]
@@ -45,10 +60,23 @@ public class PlayerAttack : MonoBehaviour
     public int S1BlowType = 2;// 0= stagger, 1 = knock
 
     ////Up Special
-    //[Header("Special Attack Up")]
+    [Header("Special Attack Up")]
+    public float S2Freeze = 0.8f;
+    public float S2Damage = 20f;
+    public float S2Dash = 50f;
+    public float S2PushForce = 0.4f;
+    public int S2BlowType;// 0= stagger, 1 = knock
 
     ////Down Special
-    //[Header("Special Attack Down")]
+    [Header("Special Attack Down")]
+    public float S3Freeze = 0.8f;
+    public float S3Damage = 20f;
+    public float S3Dash = 50f;
+    public float S3PushForce = 0.4f;
+    public int S3BlowType;// 0= stagger, 1 = knock
+
+    public GameObject SlamHitbox;
+    public Vector3 MaxMagnitude;
 
     [Header("Tiring Setting")]
     public bool IsTired = false;
@@ -60,18 +88,17 @@ public class PlayerAttack : MonoBehaviour
     public int MaximumComboCount = 4;
     public float ComboEndCooldownTime = 3f;
     public float ComboCountInterval = 0.5f;
-    public float ComboIntervalCounting;
+    private float ComboIntervalCounting;
 
-    public GameObject AttackHitBox;
     public GameObject PlayerTransform;
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        AttackHitBox.SetActive(false);
         ComboIntervalCounting = 1;
         AttackFreezeTimer = 1;
+        MaxMagnitude = SlamHitbox.transform.localScale;
     }
 
     // Update is called once per frame
@@ -96,17 +123,17 @@ public class PlayerAttack : MonoBehaviour
                 {
                     DoUpperCut();
                 }
-                else if (Input.GetAxis("Horizontal") != 0)
+                else if (Input.GetAxisRaw("Horizontal") != 0)
                 {
-                    DoPush();
+                    DoKick();
                 }
                 else if (Input.GetKey(KeyCode.DownArrow))
                 {
-
+                    DoGroundSlam();
                 }
                 else //No other key
                 {
-
+                    DoSpin();
                 }
             }
         }
@@ -148,6 +175,7 @@ public class PlayerAttack : MonoBehaviour
             AttackHitBox.SetActive(false);
         }
 
+        
         if (AttackFreezeTimer < 1)
         {
             CanAttack = false;
@@ -177,10 +205,64 @@ public class PlayerAttack : MonoBehaviour
             }
             else if (TiringTimeCount >= 1)
             {
+                if (AttackHitBox.transform.localPosition.x < 0)
+                {
+                    AttackHitBox.transform.localPosition = new Vector3(-AttackHitBox.transform.localPosition.x,
+                        AttackHitBox.transform.localPosition.y,
+                        AttackHitBox.transform.localPosition.z);
+                }
+                isPushUp = false;
+                isAoe = false;
+                isSpin = false;
                 IsTired = false;
                 CanAttack = true;
             }
         }
+
+        //=========
+        //GroundSlam
+        //=========
+
+        if (SlamHitbox.activeSelf)
+        {
+            if (SlamHitbox.transform.localScale.x < MaxMagnitude.x)
+            {
+                SlamHitbox.transform.localScale += SlamHitbox.transform.localScale * (Time.deltaTime / 0.05f);
+            }
+            else
+            {
+                AttackHitBox.SetActive(false);
+            }
+        }
+
+        //=========
+        //Spin
+        //=========
+
+        if (isSpin)
+        {
+            Controller.InvincibleTime = 0;
+
+            if (IsAttacking)
+            {
+
+                if (TimeSpinCount < AttackFreeze/SpinCount)
+                {
+                    TimeSpinCount += Time.deltaTime;
+                }
+                else
+                {
+                    AttackHitBox.transform.localPosition = new Vector3(-AttackHitBox.transform.localPosition.x,
+                        AttackHitBox.transform.localPosition.y, 
+                        AttackHitBox.transform.localPosition.z);
+
+                    TimeSpinCount = 0;
+                }
+
+            }
+
+        }
+
     }
 
     //==========
@@ -189,6 +271,7 @@ public class PlayerAttack : MonoBehaviour
 
     public void DoPunch()
     {
+        AttackHitBox = FrontHitbox;
         AttackFreeze = PunchFreeze;
         AttackDamage = PunchDamage;
         AttackDash = PunchDash;
@@ -199,6 +282,7 @@ public class PlayerAttack : MonoBehaviour
     }
     public void DoLastPunch()
     {
+        AttackHitBox = FrontHitbox;
         AttackFreeze = PunchFreeze;
         AttackDamage = PunchDamage;
         AttackDash = PunchDash;
@@ -208,8 +292,25 @@ public class PlayerAttack : MonoBehaviour
         Attack();
     }
 
-    public void DoPush()
+    public void DoSpin()
     {
+        TimeSpinCount = 0;
+        isSpin = true;
+        isAoe = true;
+
+        AttackHitBox = FrontHitbox;
+        AttackFreeze = S0Freeze;
+        AttackDash = S0Dash;
+        AttackPushForce = S0PushForce;
+        AttackBlowType = S0BlowType;
+
+        Debug.Log("Player Attack Spin");
+        SpecialAttack();
+    }
+
+    public void DoKick()
+    {
+        AttackHitBox = FrontHitbox;
         AttackFreeze = S1Freeze;
         AttackDash = S1Dash;
         AttackPushForce = S1PushForce;
@@ -221,10 +322,41 @@ public class PlayerAttack : MonoBehaviour
 
     }
 
+    
+
     public void DoUpperCut()
     {
+        isPushUp = true;
+
+
+        AttackHitBox = FrontHitbox;
+        AttackFreeze = S2Freeze;
+        AttackDash = S2Dash;
+        AttackPushForce = S2PushForce;
+        AttackBlowType = S2BlowType;
+
+        Debug.Log("Player Attack Uppercut");
+        SpecialAttack();
+    }
+
+    public void DoGroundSlam()
+    {
+        SlamHitbox.transform.localScale = MaxMagnitude * 0.05f;
+
+        isAoe = true;
+        AttackHitBox = SlamHitbox;
+        AttackFreeze = S3Freeze;
+        AttackDash = S3Dash;
+        AttackPushForce = S3PushForce;
+        AttackBlowType = S3BlowType;
+
+
+        Debug.Log("Player Attack Ground Slam");
+
+        SpecialAttack();
 
     }
+
 
     private void Attack()
     {
@@ -269,8 +401,32 @@ public class PlayerAttack : MonoBehaviour
         {
             //Deal Damage to Enemy
             other.SendMessage("ReceiveDamage", AttackDamage);
-            other.SendMessage("ReceiveForce", AttackPushForce);
+
+            if (isAoe)
+            {
+                if (other.transform.position.x < transform.position.x)
+                {
+                    other.SendMessage("ReceiveForce", -AttackPushForce * transform.localScale.x);
+                }
+                else
+                {
+                    other.SendMessage("ReceiveForce", AttackPushForce * transform.localScale.x);
+                }
+            }
+            else
+            {
+                other.SendMessage("ReceiveForce", AttackPushForce);
+            }
+  
             other.SendMessage("ReceiveBlow", AttackBlowType);
+
+            if (isPushUp)
+            {
+                other.SendMessage("ReceiveForceUp", AttackPushForce * 100);
+
+            }
+
+
 
             Debug.Log("Hit Enemy");
         }

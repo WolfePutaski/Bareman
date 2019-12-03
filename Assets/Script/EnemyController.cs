@@ -268,6 +268,10 @@ public class EnemyController : MonoBehaviour
     {
         GetComponent<Rigidbody>().AddForce(Vector3.right * Target.transform.localScale.x * Force, ForceMode.Impulse);
     }
+    public void ReceiveForceeUp(float Force)
+    {
+        GetComponent<Rigidbody>().AddForce(Vector3.up * Force, ForceMode.Impulse);
+    }
 
     public void ReceiveBlow(int BlowType)
     {

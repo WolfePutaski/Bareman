@@ -1544,6 +1544,101 @@ PrefabInstance:
       propertyPath: PunchPushForce
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: CanAttack
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: AttackDash
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S3PushForce
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S2Dash
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S2PushForce
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S2Freeze
+      value: 0.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S3Freeze
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S2BlowType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S0Freeze
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S0PushForce
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: S0BlowType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: SpinCount
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 2785386071839465200, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: TimeSpinCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6540937547951207479, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1072458150375580330, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6643660594590785496, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: m_TagString
+      value: PlayerAttack
+      objectReference: {fileID: 0}
+    - target: {fileID: 6643660594590785496, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1042200807247582403, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5972641604235093413, guid: 7668d509c542b2a40bffa534a397552d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7668d509c542b2a40bffa534a397552d, type: 3}
 --- !u!1 &1952866061
@@ -1809,6 +1904,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4980856616636453971, guid: 8a62a5e2fff9d804eafb14ba6859b41b,
+        type: 3}
+      propertyPath: m_Name
+      value: Main Camera
+      objectReference: {fileID: 0}
     - target: {fileID: 1915336261944679229, guid: 8a62a5e2fff9d804eafb14ba6859b41b,
         type: 3}
       propertyPath: Enemy.Array.size
@@ -1839,11 +1939,6 @@ PrefabInstance:
         type: 3}
       propertyPath: CanSpawnTimer
       value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 4980856616636453971, guid: 8a62a5e2fff9d804eafb14ba6859b41b,
-        type: 3}
-      propertyPath: m_Name
-      value: Main Camera
       objectReference: {fileID: 0}
     - target: {fileID: 4980856616636454063, guid: 8a62a5e2fff9d804eafb14ba6859b41b,
         type: 3}
